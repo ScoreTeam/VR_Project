@@ -265,8 +265,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b3b79f98be3f34e8fefade4cef2ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeScale: 0.9
-  fixedTimeStep: 0
+  timeScale: 1
+  fixedTimeStep: 1
   iterationsPerFrame: 3
   gravity: -10
   collisionDamping: 0.95
@@ -274,7 +274,7 @@ MonoBehaviour:
   targetDensity: 630
   pressureMultiplier: 288
   nearPressureMultiplier: 2.25
-  viscosityStrength: 0.001
+  viscosityStrength: 0.01
   compute: {fileID: 7200000, guid: 9443696acfd0ebe4fb503b56d952256c, type: 3}
   spawner: {fileID: 271053323}
   display: {fileID: 271053320}
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numParticlesPerAxis: 35
-  centre: {x: 0, y: -0.47, z: 0}
+  centre: {x: 0, y: -0.5, z: 0}
   size: 3.7
   initialVel:
     x: 0

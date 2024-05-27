@@ -31,6 +31,12 @@ public class Simulation3D : MonoBehaviour
     ComputeBuffer spatialIndices;
     ComputeBuffer spatialOffsets;
 
+    public Vector3 BoundsSize = new Vector3(10, 10, 10);
+    public Vector3 BoundsCentre = new Vector3(0, 0, 0);
+
+    ComputeBuffer ObBoxesCenters;
+    ComputeBuffer ObBoxesSizes;
+
     // Kernel IDs
     const int externalForcesKernel = 0;
     const int spatialHashKernel = 1;
@@ -109,8 +115,8 @@ public class Simulation3D : MonoBehaviour
             isPaused = true;
             pauseNextFrame = false;
         }
-        floorDisplay.transform.localScale = new Vector3(1, 1 / transform.localScale.y * 0.1f, 1);
-
+        // floorDisplay.transform.localScale = new Vector3(BoundsSize.x, 1 / BoundsSize.y * 0.1f, BoundsSize.z);
+        // floorDisplay.transform.position = new Vector3(BoundsCentre.x,BoundsCentre.y - BoundsSize.y*0.5f,BoundsCentre.z);
         HandleInput();
     }
 
@@ -144,8 +150,8 @@ public class Simulation3D : MonoBehaviour
 
     void UpdateSettings(float deltaTime)
     {
-        Vector3 simBoundsSize = transform.localScale;
-        Vector3 simBoundsCentre = transform.position;
+        // Vector3 simBoundsSize = transform.localScale;
+        // Vector3 simBoundsCentre = transform.position;
 
         compute.SetFloat("deltaTime", deltaTime);
         compute.SetFloat("gravity", gravity);
@@ -155,8 +161,8 @@ public class Simulation3D : MonoBehaviour
         compute.SetFloat("pressureMultiplier", pressureMultiplier);
         compute.SetFloat("nearPressureMultiplier", nearPressureMultiplier);
         compute.SetFloat("viscosityStrength", viscosityStrength);
-        compute.SetVector("boundsSize", simBoundsSize);
-        compute.SetVector("centre", simBoundsCentre);
+        compute.SetVector("boundsSize", BoundsSize);
+        compute.SetVector("centre", BoundsCentre);
 
         compute.SetMatrix("localToWorld", transform.localToWorldMatrix);
         compute.SetMatrix("worldToLocal", transform.worldToLocalMatrix);
@@ -200,10 +206,14 @@ public class Simulation3D : MonoBehaviour
     void OnDrawGizmos()
     {
         // Draw Bounds
+        
+        floorDisplay.transform.localScale = new Vector3(BoundsSize.x, 1 / BoundsSize.y * 0.1f, BoundsSize.z);
+        floorDisplay.transform.position = new Vector3(BoundsCentre.x,BoundsCentre.y - BoundsSize.y*0.5f,BoundsCentre.z);
+        
         var m = Gizmos.matrix;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.color = new Color(0, 1, 0, 0.5f);
-        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+        Gizmos.DrawWireCube(BoundsCentre, BoundsSize);
         Gizmos.matrix = m;
 
     }

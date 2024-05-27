@@ -247,7 +247,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8.6, y: 5.16, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 620375868}
@@ -265,20 +265,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b3b79f98be3f34e8fefade4cef2ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeScale: 1
+  timeScale: 0.5
   fixedTimeStep: 1
   iterationsPerFrame: 3
-  gravity: -10
+  gravity: -0.0098
   collisionDamping: 0.95
   smoothingRadius: 0.2
-  targetDensity: 630
-  pressureMultiplier: 288
-  nearPressureMultiplier: 2.25
-  viscosityStrength: 0.01
+  targetDensity: 600
+  pressureMultiplier: 300
+  nearPressureMultiplier: 10
+  viscosityStrength: 0.001
   compute: {fileID: 7200000, guid: 9443696acfd0ebe4fb503b56d952256c, type: 3}
   spawner: {fileID: 271053323}
   display: {fileID: 271053320}
   floorDisplay: {fileID: 620375868}
+  BoundsSize: {x: 20, y: 10, z: 10}
+  BoundsCentre: {x: 0, y: 0, z: 0}
 --- !u!114 &271053320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,7 +327,7 @@ MonoBehaviour:
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
   gradientResolution: 50
-  velocityDisplayMax: 6
+  velocityDisplayMax: 8
   meshResolution: 3
   debug_MeshTriCount: 2
 --- !u!33 &271053322
@@ -349,13 +351,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numParticlesPerAxis: 35
-  centre: {x: 0, y: -0.5, z: 0}
-  size: 3.7
+  centre: {x: 6, y: 0, z: 0}
+  size: 8
   initialVel:
-    x: 0
+    x: -4
     y: 0
     z: 0
-  jitterStrength: 0.035
+  jitterStrength: 0.05
   showSpawnBounds: 1
   debug_numParticles: 42875
 --- !u!1 &620375867
@@ -385,8 +387,8 @@ Transform:
   m_GameObject: {fileID: 620375867}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 0.01, z: 1}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
+  m_LocalScale: {x: 20, y: 0.01, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 271053318}
@@ -500,7 +502,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -526,13 +528,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.040845454, y: -0, z: -0, w: 0.9991655}
-  m_LocalPosition: {x: 0, y: 0.76, z: -8.244}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 4.682, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

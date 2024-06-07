@@ -61,12 +61,13 @@ public class Simulation3D : MonoBehaviour
     Spawner3D.SpawnData spawnData;
     private static BVHManager bvhManager;
 
-void Awake() {
-    
+    void Awake()
+    {
+
         floorDisplay.transform.localScale = new Vector3(BoundsSize.x, 1 / BoundsSize.y * 0.1f, BoundsSize.z);
         floorDisplay.transform.position = new Vector3(BoundsCentre.x, BoundsCentre.y - BoundsSize.y * 0.5f, BoundsCentre.z);
 
-}
+    }
     static Simulation3D()
     {
         // Initialize obstacle centers and sizes
@@ -79,7 +80,7 @@ void Awake() {
         // }
 
 
-        
+
         // else
         // {
         //     Debug.LogError("BVHManager not found in the scene.");
@@ -142,12 +143,12 @@ void Awake() {
             // // Process the boxes
 
             obstacleCentres = new Vector3[boxesArray.Length];
-        obstacleSizes = new Vector3[boxesArray.Length];
-        for (int i = 0; i < boxesArray.Length; i++)
-        {
-            obstacleCentres[i] = boxesArray[i].Center;
-            obstacleSizes[i] = boxesArray[i].Size;
-        }
+            obstacleSizes = new Vector3[boxesArray.Length];
+            for (int i = 0; i < boxesArray.Length; i++)
+            {
+                obstacleCentres[i] = boxesArray[i].Center;
+                obstacleSizes[i] = boxesArray[i].Size;
+            }
             // foreach (var box in boxes)
             // {
             //     Debug.Log($"Box Center: {box.Center}, Size: {box.Size}");
@@ -227,11 +228,12 @@ void Awake() {
         compute.SetFloat("viscosityStrength", viscosityStrength);
         compute.SetVector("boundsSize", BoundsSize);
         compute.SetVector("centre", BoundsCentre);
-
-        compute.SetInt("numObstacles", obstacleCentres.Length);
-        compute.SetVectorArray("obstacleSizes", ConvertToVector4Array(obstacleSizes));
-        compute.SetVectorArray("obstacleCentres", ConvertToVector4Array(obstacleCentres));
-
+        if (obstacleCentres != null)
+        {
+            compute.SetInt("numObstacles", obstacleCentres.Length);
+            compute.SetVectorArray("obstacleSizes", ConvertToVector4Array(obstacleSizes));
+            compute.SetVectorArray("obstacleCentres", ConvertToVector4Array(obstacleCentres));
+        }
         compute.SetMatrix("localToWorld", transform.localToWorldMatrix);
         compute.SetMatrix("worldToLocal", transform.worldToLocalMatrix);
     }
@@ -280,9 +282,12 @@ void Awake() {
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawWireCube(BoundsCentre, BoundsSize);
-        for (int i = 0; i < obstacleCentres.Length; i++)
+        if (obstacleCentres != null)
         {
-            Gizmos.DrawWireCube(obstacleCentres[i], obstacleSizes[i]);
+            for (int i = 0; i < obstacleCentres.Length; i++)
+            {
+                Gizmos.DrawWireCube(obstacleCentres[i], obstacleSizes[i]);
+            }
         }
         Gizmos.matrix = m;
 

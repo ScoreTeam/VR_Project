@@ -11,6 +11,7 @@
 #include "./SpatialHash3D.hlsl"
 
 static const int NumThreads = 64;
+static const int MaxObstacles = 2000;
 
 // Buffers
 RWStructuredBuffer<float3> Positions;
@@ -46,10 +47,9 @@ const float2 interactionInputPoint;
 const float interactionInputStrength;
 const float interactionInputRadius;
 
-
 const uint numObstacles;
-uniform float3 obstacleSizes[100];
-uniform float3 obstacleCentres[100];
+uniform float3 obstacleSizes[MaxObstacles];
+uniform float3 obstacleCentres[MaxObstacles];
 
 float PressureFromDensity(float density)
 {

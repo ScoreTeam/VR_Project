@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Mathematics;
+using System.Collections.Generic;
 
 public class Simulation3D : MonoBehaviour
 {
@@ -58,18 +59,31 @@ public class Simulation3D : MonoBehaviour
     bool isPaused;
     bool pauseNextFrame;
     Spawner3D.SpawnData spawnData;
+    private static BVHManager bvhManager;
 
+void Awake() {
+    
+        floorDisplay.transform.localScale = new Vector3(BoundsSize.x, 1 / BoundsSize.y * 0.1f, BoundsSize.z);
+        floorDisplay.transform.position = new Vector3(BoundsCentre.x, BoundsCentre.y - BoundsSize.y * 0.5f, BoundsCentre.z);
 
+}
     static Simulation3D()
     {
         // Initialize obstacle centers and sizes
-        obstacleCentres = new Vector3[4];
-        obstacleSizes = new Vector3[4];
-        for (int i = 0; i < 4; i++)
-        {
-            obstacleCentres[i] = new Vector3(i * 3 - 4.5f, i - 1.5f, 0);
-            obstacleSizes[i] = new Vector3(1, 1, 5);
-        }
+        // obstacleCentres = new Vector3[4];
+        // obstacleSizes = new Vector3[4];
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     obstacleCentres[i] = new Vector3(i * 3 - 4.5f, i - 1.5f, 0);
+        //     obstacleSizes[i] = new Vector3(1, 1, 5);
+        // }
+
+
+        
+        // else
+        // {
+        //     Debug.LogError("BVHManager not found in the scene.");
+        // }
     }
     void Start()
     {
@@ -118,6 +132,27 @@ public class Simulation3D : MonoBehaviour
 
         // Init display
         display.Init(this);
+        bvhManager = FindObjectOfType<BVHManager>();
+
+        if (bvhManager != null)
+        {
+            // Access the list of boxes
+            List<BoxNode> boxes = bvhManager.GetBoxes();
+            BoxNode[] boxesArray = boxes.ToArray();
+            // // Process the boxes
+
+            obstacleCentres = new Vector3[boxesArray.Length];
+        obstacleSizes = new Vector3[boxesArray.Length];
+        for (int i = 0; i < boxesArray.Length; i++)
+        {
+            obstacleCentres[i] = boxesArray[i].Center;
+            obstacleSizes[i] = boxesArray[i].Size;
+        }
+            // foreach (var box in boxes)
+            // {
+            //     Debug.Log($"Box Center: {box.Center}, Size: {box.Size}");
+            // }
+        }
     }
 
     void FixedUpdate()
@@ -241,17 +276,12 @@ public class Simulation3D : MonoBehaviour
     void OnDrawGizmos()
     {
         // Draw Bounds
-
-        floorDisplay.transform.localScale = new Vector3(BoundsSize.x, 1 / BoundsSize.y * 0.1f, BoundsSize.z);
-        floorDisplay.transform.position = new Vector3(BoundsCentre.x, BoundsCentre.y - BoundsSize.y * 0.5f, BoundsCentre.z);
-
         var m = Gizmos.matrix;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawWireCube(BoundsCentre, BoundsSize);
         for (int i = 0; i < obstacleCentres.Length; i++)
         {
-            Gizmos.color = new Color(1, 0, 0, 0.5f);
             Gizmos.DrawWireCube(obstacleCentres[i], obstacleSizes[i]);
         }
         Gizmos.matrix = m;

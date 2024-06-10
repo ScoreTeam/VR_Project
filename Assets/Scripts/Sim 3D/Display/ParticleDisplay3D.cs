@@ -26,6 +26,7 @@ public class ParticleDisplay3D : MonoBehaviour
         mat = new Material(shader);
         mat.SetBuffer("Positions", sim.positionBuffer);
         mat.SetBuffer("Velocities", sim.velocityBuffer);
+        mat.SetBuffer("InitialVelocities", sim.initVelocityBuffer);
 
         mesh = SebStuff.SphereGenerator.GenerateSphereMesh(meshResolution);
         debug_MeshTriCount = mesh.triangles.Length / 3;

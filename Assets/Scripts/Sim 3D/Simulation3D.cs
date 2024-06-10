@@ -286,6 +286,7 @@ public class Simulation3D : MonoBehaviour
         {
             for (int i = 0; i < obstacleCentres.Length; i++)
             {
+                // Gizmos.color = Color.black;
                 Gizmos.DrawWireCube(obstacleCentres[i], obstacleSizes[i]);
             }
         }
@@ -302,42 +303,5 @@ public class Simulation3D : MonoBehaviour
         }
         return output;
     }
-    // public static void ReGenerateParticles(ComputeBuffer PositionsBuffer, ComputeBuffer VelocitiesBuffer, int ParticlesLayer, Vector3 centre, float size, float3 initialVel, float jitterStrength)
-    //     {
-    //         Vector3[] positionsData = new Vector3[PositionsBuffer.count];
-    //         Vector3[] velocitiesData = new Vector3[VelocitiesBuffer.count];
-    //         PositionsBuffer.GetData(positionsData);
-    //         VelocitiesBuffer.GetData(velocitiesData);
-    //         int n = Convert.ToInt32(Math.Pow(PositionsBuffer.count, 1f / 3f));
-
-    //         int particleIndex = n * (ParticlesLayer - 1);
-
-    //         // Vector3 posLocal = WorldToLocal.MultiplyPoint(positionsData[particleIndex]);
-    //         // Vector3 velocityLocal = WorldToLocal.MultiplyVector(velocitiesData[particleIndex]);
-    //         for (int y = 0; y < n; y++)
-    //         {
-    //             for (int z = 0; z < n; z++)
-    //             {
-    //                 float tx = 0 / (n - 1f);
-    //                 float ty = y / (n - 1f);
-    //                 float tz = z / (n - 1f);
-
-    //                 float px = (tx - 0.5f) * size + centre.x;
-    //                 float py = (ty - 0.5f) * size + centre.y;
-    //                 float pz = (tz - 0.5f) * size + centre.z;
-    //                 float3 jitter = UnityEngine.Random.insideUnitSphere * jitterStrength;
-    //                 positionsData[particleIndex] = new float3(px, py, pz) + jitter;
-    //                 velocitiesData[particleIndex] = initialVel;
-    //                 particleIndex++;
-    //             }
-    //             // positionsData[particleIndex] = LocalToWorld.MultiplyPoint(posLocal);
-    //             // velocitiesData[particleIndex] = LocalToWorld.MultiplyPoint(velocityLocal);
-    //         }
-    //         // Set the modified data back to the buffer
-    //         PositionsBuffer.SetData(positionsData);
-    //         VelocitiesBuffer.SetData(velocitiesData);
-    //     }
-
-
-
+    
 }

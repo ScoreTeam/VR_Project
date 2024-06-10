@@ -25,6 +25,7 @@ Shader "Instanced/Particle3DSurf" {
 		#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 			StructuredBuffer<float3> Positions;
 			StructuredBuffer<float3> Velocities;
+			StructuredBuffer<float3> InitialVelocities;
 		#endif
 
 
@@ -47,33 +48,45 @@ Shader "Instanced/Particle3DSurf" {
 				float speedT = saturate(speed / velocityMax);
 				float colT = speedT;
 				o.colour = tex2Dlod(ColourMap, float4(colT, 0.5,0,0));
+				o.colour.a = 0.5;
 	#endif
 			}
 
 			void setup()
-			{
-			#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
-				float3 pos = Positions[unity_InstanceID];
+{
+    #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+        float3 pos = Positions[unity_InstanceID];
 
-				unity_ObjectToWorld._11_21_31_41 = float4(scale, 0, 0, 0);
-				unity_ObjectToWorld._12_22_32_42 = float4(0, scale, 0, 0);
-				unity_ObjectToWorld._13_23_33_43 = float4(0, 0, scale, 0);
-				unity_ObjectToWorld._14_24_34_44 = float4(pos, 1);
-				unity_WorldToObject = unity_ObjectToWorld;
-				unity_WorldToObject._14_24_34 *= -1;
-				unity_WorldToObject._11_22_33 = 1.0f / unity_WorldToObject._11_22_33;
+        float3 currentVelocity = Velocities[unity_InstanceID];
+        float3 initialVelocity = InitialVelocities[unity_InstanceID];
+        
+        float velocityDifference = length(currentVelocity - initialVelocity);
 
-			#endif
-			}
+        if (velocityDifference > 2.0f) {
+            // Set scale to normal scale
+            unity_ObjectToWorld._11_21_31_41 = float4(scale, 0, 0, 0);
+            unity_ObjectToWorld._12_22_32_42 = float4(0, scale, 0, 0);
+            unity_ObjectToWorld._13_23_33_43 = float4(0, 0, scale, 0);
+            unity_ObjectToWorld._14_24_34_44 = float4(pos, 1);
+        }
+        else {
+            // Set scale to zero to make the particle disappear
+            unity_ObjectToWorld._11_21_31_41 = float4(0, 0, 0, 0);
+            unity_ObjectToWorld._12_22_32_42 = float4(0, 0, 0, 0);
+            unity_ObjectToWorld._13_23_33_43 = float4(0, 0, 0, 0);
+            unity_ObjectToWorld._14_24_34_44 = float4(0, 0, 0, 0);
+        }
+    #endif
+}
 
 			half _Glossiness;
 			half _Metallic;
 
 			void surf(Input IN, inout SurfaceOutputStandard o) {
-				o.Albedo = IN.colour;
+				o.Albedo = IN.colour.rgb; // Use the RGB components of the color
+    			o.Alpha = IN.colour.a; // Use the alpha component for transparency
 				o.Metallic = 0;
 				o.Smoothness = 0;
-				o.Alpha = 1;
 			}
 			ENDCG
 		}

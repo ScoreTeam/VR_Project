@@ -62,15 +62,13 @@ Shader "Instanced/Particle3DSurf" {
         
         float velocityDifference = length(currentVelocity - initialVelocity);
 
-        if (velocityDifference > 2.0f) {
-            // Set scale to normal scale
+        if (velocityDifference > 3.0f) {
             unity_ObjectToWorld._11_21_31_41 = float4(scale, 0, 0, 0);
             unity_ObjectToWorld._12_22_32_42 = float4(0, scale, 0, 0);
             unity_ObjectToWorld._13_23_33_43 = float4(0, 0, scale, 0);
             unity_ObjectToWorld._14_24_34_44 = float4(pos, 1);
         }
         else {
-            // Set scale to zero to make the particle disappear
             unity_ObjectToWorld._11_21_31_41 = float4(0, 0, 0, 0);
             unity_ObjectToWorld._12_22_32_42 = float4(0, 0, 0, 0);
             unity_ObjectToWorld._13_23_33_43 = float4(0, 0, 0, 0);
@@ -83,8 +81,8 @@ Shader "Instanced/Particle3DSurf" {
 			half _Metallic;
 
 			void surf(Input IN, inout SurfaceOutputStandard o) {
-				o.Albedo = IN.colour.rgb; // Use the RGB components of the color
-    			o.Alpha = IN.colour.a; // Use the alpha component for transparency
+				o.Albedo = IN.colour.rgb;
+    			o.Alpha = IN.colour.a; 
 				o.Metallic = 0;
 				o.Smoothness = 0;
 			}

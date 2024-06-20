@@ -73,7 +73,7 @@ Shader "Instanced/Particle3DWithLines" {
 
                 float velocityDifference = length(currentVelocity - initialVelocity);
 
-                if (velocityDifference >= 2.0f) {
+                if (velocityDifference >= 1.0f) {
                     geomOut vertex;
 
                     vertex.pos = UnityObjectToClipPos(float4(pos, 1.0));

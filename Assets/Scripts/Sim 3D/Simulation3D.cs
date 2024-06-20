@@ -46,6 +46,8 @@ public class Simulation3D : MonoBehaviour
     ComputeBuffer ObBoxesCenters;
     ComputeBuffer ObBoxesSizes;
 
+    ComputeBuffer pointsBool;
+
     // Kernel IDs
     const int externalForcesKernel = 0;
     const int spatialHashKernel = 1;
@@ -61,8 +63,13 @@ public class Simulation3D : MonoBehaviour
     bool isPaused;
     bool pauseNextFrame;
     Spawner3D.SpawnData spawnData;
+
+
+    Spawner3D.SpawnData genData;
     private static BVHManager bvhManager;
-    private float PreTime = 0;
+    private float PreTime, PreTime2 = 0;
+
+    private int layerCount = 0;
 
     void Awake()
     {
@@ -81,19 +88,12 @@ public class Simulation3D : MonoBehaviour
         //     obstacleCentres[i] = new Vector3(i * 3 - 4.5f, i - 1.5f, 0);
         //     obstacleSizes[i] = new Vector3(1, 1, 5);
         // }
-
-
-
-        // else
-        // {
-        //     Debug.LogError("BVHManager not found in the scene.");
-        // }
     }
     void Start()
     {
         Debug.Log("Controls: Space = Play/Pause, R = Reset");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
-
+        Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
         Time.fixedDeltaTime = deltaTime;
 
@@ -115,6 +115,7 @@ public class Simulation3D : MonoBehaviour
         ObBoxesCenters = ComputeHelper.CreateStructuredBuffer<float3>(1000);
         ObBoxesSizes = ComputeHelper.CreateStructuredBuffer<float3>(1000);
 
+        pointsBool = ComputeHelper.CreateStructuredBuffer<uint>(numParticles);
         // Set buffer data
         SetInitialBufferData(spawnData);
 
@@ -133,6 +134,7 @@ public class Simulation3D : MonoBehaviour
         ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters", collisionDetection, viscosityKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes", collisionDetection, viscosityKernel, updatePositionsKernel);
 
+        ComputeHelper.SetBuffer(compute, pointsBool, "PointsBool", externalForcesKernel, spatialHashKernel, densityKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         compute.SetInt("numParticles", positionBuffer.count);
 
         gpuSort = new();
@@ -156,10 +158,7 @@ public class Simulation3D : MonoBehaviour
                 obstacleCentres[i] = boxesArray[i].Center;
                 obstacleSizes[i] = boxesArray[i].Size;
             }
-            // foreach (var box in boxes)
-            // {
-            //     Debug.Log($"Box Center: {box.Center}, Size: {box.Size}");
-            // }
+
         }
     }
 
@@ -199,10 +198,17 @@ public class Simulation3D : MonoBehaviour
 
             UpdateSettings(timeStep);
             float t = Time.realtimeSinceStartup;
-            if (t - PreTime >= 0.1)
+
+            if (t - PreTime >= 0.1f)
             {
                 PreTime = t;
                 SetPreviousPositions();
+            }
+
+            if (t - PreTime2 >= 1.0f)
+            {
+                PreTime2 = t;
+                SetNewLayer();
             }
 
             for (int i = 0; i < iterationsPerFrame; i++)
@@ -256,6 +262,13 @@ public class Simulation3D : MonoBehaviour
         float3[] allPoints = new float3[spawnData.points.Length];
         System.Array.Copy(spawnData.points, allPoints, spawnData.points.Length);
 
+        int[] pb = new int[spawnData.points.Length];
+        for (int i = 0; i < spawnData.points.Length; i++)
+        {
+            pb[i] = 0;
+        }
+        pointsBool.SetData(pb);
+
         positionBuffer.SetData(allPoints);
         initPositionBuffer.SetData(allPoints);
         prepositionBuffer.SetData(allPoints);
@@ -263,6 +276,60 @@ public class Simulation3D : MonoBehaviour
         predictedPositionsBuffer.SetData(allPoints);
         velocityBuffer.SetData(spawnData.velocities);
         initVelocityBuffer.SetData(spawnData.velocities);
+    }
+
+    void SetNewLayer()
+    {
+        genData = spawner.GeneratePoints();
+
+        float3[] partPoints = new float3[genData.points.Length];
+        System.Array.Copy(genData.points, partPoints, genData.points.Length);
+
+
+        float3[] partVelocities = new float3[genData.velocities.Length];
+        System.Array.Copy(genData.velocities, partVelocities, genData.velocities.Length);
+
+        int[] pb = new int[genData.points.Length];
+        for (int i = 0; i < genData.points.Length; i++)
+        {
+            pb[i] = 1;
+        }
+
+        float3[] P = new float3[positionBuffer.count];
+        float3[] V = new float3[positionBuffer.count];
+        float3[] INIT_V = new float3[positionBuffer.count];
+        float3[] PRE = new float3[positionBuffer.count];
+        float3[] CRR = new float3[positionBuffer.count];
+        int[] B = new int[pointsBool.count];
+
+        positionBuffer.GetData(P);
+        velocityBuffer.GetData(V);
+        initVelocityBuffer.GetData(INIT_V);
+        prepositionBuffer.GetData(PRE);
+        crrpositionBuffer.GetData(CRR);
+        pointsBool.GetData(B);
+        if (layerCount +genData.points.Length >= positionBuffer.count)
+        {
+            layerCount = 0;
+        }
+        for (int i = 0; i < genData.points.Length; i++)
+        {
+            P[layerCount + i] = partPoints[i];
+            V[layerCount + i] = partVelocities[i];
+            INIT_V[layerCount + i] = partVelocities[i];
+            B[layerCount + i] = pb[i];
+            PRE[layerCount + i] = partPoints[i];
+            CRR[layerCount + i] = partPoints[i];
+        }
+        layerCount += genData.points.Length;
+
+        pointsBool.SetData(B);
+        positionBuffer.SetData(P);
+        predictedPositionsBuffer.SetData(P);
+        prepositionBuffer.SetData(PRE);
+        crrpositionBuffer.SetData(CRR);
+        velocityBuffer.SetData(V);
+        initVelocityBuffer.SetData(INIT_V);
     }
 
     void SetPreviousPositions()
@@ -292,7 +359,7 @@ public class Simulation3D : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             isPaused = false;
-            SetPreviousPositions();
+            // SetNewLayer();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -304,7 +371,8 @@ public class Simulation3D : MonoBehaviour
 
     void OnDestroy()
     {
-        ComputeHelper.Release(positionBuffer, predictedPositionsBuffer, velocityBuffer, densityBuffer, spatialIndices, spatialOffsets, ObBoxesCenters, ObBoxesSizes);
+        ComputeHelper.Release(positionBuffer, predictedPositionsBuffer, velocityBuffer, densityBuffer, spatialIndices, spatialOffsets,
+         ObBoxesCenters, ObBoxesSizes, initVelocityBuffer, initPositionBuffer, crrpositionBuffer, prepositionBuffer, pointsBool);
     }
 
     void OnDrawGizmos()

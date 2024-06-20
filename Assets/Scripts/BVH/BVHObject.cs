@@ -7,7 +7,7 @@ public class BVHObject : MonoBehaviour
     public List<AABB> BoundingBoxes;
     public List<AABB> AllBoxes;
     // public MeshData meshData;
-    [SerializeField] public int subdivisions = 5; // You can adjust this for more/less accuracy
+    [SerializeField] public int subdivisions = 10; // You can adjust this for more/less accuracy
 
     void Start()
     {

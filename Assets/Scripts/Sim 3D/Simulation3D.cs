@@ -93,7 +93,7 @@ public class Simulation3D : MonoBehaviour
     {
         Debug.Log("Controls: Space = Play/Pause, R = Reset");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
-        Application.targetFrameRate = 60;
+        // Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
         Time.fixedDeltaTime = deltaTime;
 

@@ -350,17 +350,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99a384512b94654fbeb7c06c43f81ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numParticlesPerAxis: 10
+  numParticlesPerAxis: 15
   numPoints: 64000
   centre: {x: 10, y: 0, z: 0}
-  size: 2
+  size: 3
   initialVel:
     x: -8
     y: 0
     z: 0
   jitterStrength: 0.05
   showSpawnBounds: 1
-  debug_numParticles: 1000
+  debug_numParticles: 3375
 --- !u!1 &620375867
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class BVHManager : MonoBehaviour
     private List<BVHObject> managedObjects;
     private List<BoxNode> boxes;
 
-    [SerializeField] public int count = 0;
+    [SerializeField] public int count = 5;
 
     void Start()
     {

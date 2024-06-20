@@ -4,6 +4,7 @@ Shader "Instanced/Particle3DWithLines" {
     }
     SubShader {
         Tags { "Queue" = "Transparent" }
+        Pass {
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM

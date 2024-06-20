@@ -27,6 +27,9 @@ RWStructuredBuffer<uint> SpatialOffsets; // used for spatial hashing
 RWStructuredBuffer<float3> ObCenters;
 RWStructuredBuffer<float3> ObSizes;
 
+
+RWStructuredBuffer<uint> PointsBool;
+
 // Settings
 const uint numParticles;
 const float gravity;
@@ -102,7 +105,9 @@ void ResolveCollisions(uint particleIndex)
 		posLocal = initPosLocal;
 		preposLocal = initPosLocal;
 		crrposLocal = initPosLocal;
-		velocityLocal = initVelocityLocal;
+		velocityLocal = float3(0,0,0);
+		PointsBool[particleIndex] = 0;
+
 	}
 	// Collide particle against the test obstacle
     for (uint i = 0; i < numObstacles; ++i)
@@ -132,36 +137,6 @@ void ResolveCollisions(uint particleIndex)
             }
         }
 	}
-	
-
-	// // Collide particle against the test obstacle
-    // for (uint i = 0; i < numObstacles; ++i)
-	// {
-    //     float3 obstacleCentre = obstacleCentres[i];
-    //     float3 obstacleSize = obstacleSizes[i];
-    //     const float3 obstacleHalfSize = obstacleSize * 0.5;
-    //     float3 obstacleEdgeDst = obstacleHalfSize - abs(posLocal - obstacleCentre);
-
-    //     if (obstacleEdgeDst.x >= 0 && obstacleEdgeDst.y >= 0 && obstacleEdgeDst.z >= 0)
-    //     {
-    //         // Determine the axis with the smallest distance to the obstacle
-    //         if (obstacleEdgeDst.z < obstacleEdgeDst.x && obstacleEdgeDst.z < obstacleEdgeDst.y) 
-	// 		{
-    //             posLocal.z = obstacleHalfSize.z * sign(posLocal.z - obstacleCentre.z) + obstacleCentre.z;
-    //             velocityLocal.z *= -1 * collisionDamping;
-    //         }
-    //         else if (obstacleEdgeDst.x < obstacleEdgeDst.y && obstacleEdgeDst.x <= obstacleEdgeDst.z) 
-	// 		{
-    //             posLocal.x = obstacleHalfSize.x * sign(posLocal.x - obstacleCentre.x) + obstacleCentre.x;
-    //             velocityLocal.x *= -1 * collisionDamping;
-    //         }
-    //         else 
-	// 		{
-    //             posLocal.y = obstacleHalfSize.y * sign(posLocal.y - obstacleCentre.y) + obstacleCentre.y;
-    //             velocityLocal.y *= -1 * collisionDamping;
-    //         }
-    //     }
-	// }
 
 	// Transform resolved position/velocity back to world space
 	Positions[particleIndex] = mul(localToWorld, float4(posLocal, 1)).xyz;
@@ -177,19 +152,22 @@ void ResolveCollisions(uint particleIndex)
 void ExternalForces (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-
+	if (PointsBool[id.x] == 1)
+	{
 	// External forces (gravity)
 	Velocities[id.x] += float3(0, gravity, 0) * deltaTime;
 
 	// Predict
 	PredictedPositions[id.x] = Positions[id.x] + Velocities[id.x] * 1 / 120.0;
+	}
 }
 
 [numthreads(NumThreads,1,1)]
 void UpdateSpatialHash (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-
+	if (PointsBool[id.x] == 1)
+	{
 	// Reset offsets
 	SpatialOffsets[id.x] = numParticles;
 	// Update index buffer
@@ -198,13 +176,15 @@ void UpdateSpatialHash (uint3 id : SV_DispatchThreadID)
 	uint hash = HashCell3D(cell);
 	uint key = KeyFromHash(hash, numParticles);
 	SpatialIndices[id.x] = uint3(index, hash, key);
+	}
 }
 
 [numthreads(NumThreads,1,1)]
 void CalculateDensities (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-
+	if (PointsBool[id.x] == 1)
+	{
 	float3 pos = PredictedPositions[id.x];
 	int3 originCell = GetCell3D(pos, smoothingRadius);
 	float sqrRadius = smoothingRadius * smoothingRadius;
@@ -244,12 +224,14 @@ void CalculateDensities (uint3 id : SV_DispatchThreadID)
 	
 	Densities[id.x] = float2(density, nearDensity);
 }
+}
 
 [numthreads(NumThreads,1,1)]
 void CalculatePressureForce (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-
+	if (PointsBool[id.x] == 1)
+	{
 	// Calculate pressure
 	float density = Densities[id.x][0];
 	float densityNear = Densities[id.x][1];
@@ -308,13 +290,15 @@ void CalculatePressureForce (uint3 id : SV_DispatchThreadID)
 	float3 acceleration = pressureForce / density;
 	Velocities[id.x] += acceleration * deltaTime;
 }
+}
 
 
 [numthreads(NumThreads,1,1)]
 void CalculateViscosity (uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-		
+	if (PointsBool[id.x] == 1)
+	{
 	float3 pos = PredictedPositions[id.x];
 	int3 originCell = GetCell3D(pos, smoothingRadius);
 	float sqrRadius = smoothingRadius * smoothingRadius;
@@ -357,12 +341,15 @@ void CalculateViscosity (uint3 id : SV_DispatchThreadID)
 	}
 	Velocities[id.x] += viscosityForce * viscosityStrength * deltaTime;
 }
+}
 
 [numthreads(NumThreads, 1, 1)]
 void UpdatePositions(uint3 id : SV_DispatchThreadID)
 {
 	if (id.x >= numParticles) return;
-
+	if (PointsBool[id.x] == 1)
+	{
 	Positions[id.x] += Velocities[id.x] * deltaTime;
 	ResolveCollisions(id.x);
+	}
 }

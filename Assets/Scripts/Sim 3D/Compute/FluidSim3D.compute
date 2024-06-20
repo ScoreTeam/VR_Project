@@ -16,6 +16,8 @@ static const int MaxObstacles = 2000;
 // Buffers
 RWStructuredBuffer<float3> Positions;
 RWStructuredBuffer<float3> InitPositions;
+RWStructuredBuffer<float3> PrePositions;
+RWStructuredBuffer<float3> CrrPositions;
 RWStructuredBuffer<float3> PredictedPositions;
 RWStructuredBuffer<float3> Velocities;
 RWStructuredBuffer<float3> InitVelocities;
@@ -68,6 +70,10 @@ void ResolveCollisions(uint particleIndex)
 	float3 velocityLocal = mul(worldToLocal, float4(Velocities[particleIndex], 0)).xyz;
 
 	
+	float3 preposLocal = mul(worldToLocal, float4(PrePositions[particleIndex], 1)).xyz;
+	float3 crrposLocal = mul(worldToLocal, float4(CrrPositions[particleIndex], 1)).xyz;
+
+	
 	float3 initPosLocal = mul(worldToLocal, float4(InitPositions[particleIndex], 1)).xyz;
 	float3 initVelocityLocal = mul(worldToLocal, float4(InitVelocities[particleIndex], 0)).xyz;
 
@@ -94,6 +100,8 @@ void ResolveCollisions(uint particleIndex)
 	if (edgeDst.x <= 0||edgeDst.y <= 0||edgeDst.z <= 0)
 	{
 		posLocal = initPosLocal;
+		preposLocal = initPosLocal;
+		crrposLocal = initPosLocal;
 		velocityLocal = initVelocityLocal;
 	}
 	// Collide particle against the test obstacle
@@ -158,6 +166,10 @@ void ResolveCollisions(uint particleIndex)
 	// Transform resolved position/velocity back to world space
 	Positions[particleIndex] = mul(localToWorld, float4(posLocal, 1)).xyz;
 	Velocities[particleIndex] = mul(localToWorld, float4(velocityLocal, 0)).xyz;
+
+	
+	PrePositions[particleIndex] = mul(localToWorld, float4(preposLocal, 1)).xyz;
+	CrrPositions[particleIndex] = mul(localToWorld, float4(crrposLocal, 1)).xyz;
 
 }
 

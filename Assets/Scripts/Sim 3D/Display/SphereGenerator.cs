@@ -14,6 +14,44 @@ namespace SebStuff
         static readonly Vector3[] baseVertices = { Vector3.up, Vector3.left, Vector3.back, Vector3.right, Vector3.forward, Vector3.down };
 
 
+        public static Mesh GeneratePointMesh()
+        {
+            Mesh mesh = new Mesh();
+            Vector3[] vertices = { Vector3.zero };
+            int[] indices = { 0 };
+
+            mesh.vertices = vertices;
+            mesh.SetIndices(indices, MeshTopology.Points, 0);
+            return mesh;
+        }
+
+
+
+
+        public static Mesh GenerateQuadMesh()
+        {
+            Mesh mesh = new Mesh();
+            Vector3[] vertices = {
+        new Vector3(-0.5f, -0.5f, 0),
+        new Vector3(0.5f, -0.5f, 0),
+        new Vector3(-0.5f, 0.5f, 0),
+        new Vector3(0.5f, 0.5f, 0)
+    };
+            int[] triangles = { 0, 2, 1, 2, 3, 1 };
+            Vector2[] uv = {
+        new Vector2(0, 0),
+        new Vector2(1, 0),
+        new Vector2(0, 1),
+        new Vector2(1, 1)
+    };
+
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.uv = uv;
+            mesh.RecalculateNormals();
+            return mesh;
+        }
+
         public static Mesh GenerateSphereMesh(int resolution)
         {
             Mesh mesh = new Mesh();

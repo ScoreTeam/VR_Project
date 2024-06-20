@@ -6,7 +6,7 @@ public class BVHObject : MonoBehaviour
 {
     public List<AABB> BoundingBoxes;
     public List<AABB> AllBoxes;
-    public MeshData meshData;
+    // public MeshData meshData;
     [SerializeField] public int subdivisions = 5; // You can adjust this for more/less accuracy
 
     void Start()
@@ -31,15 +31,15 @@ public class BVHObject : MonoBehaviour
             Bounds bounds = renderer.bounds;
             Vector3 distance = (bounds.max - bounds.min) / subdivisions;
             
-            // MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
+            MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
 
-            // if (meshFilter)
-            // {
-            //     Mesh mesh = meshFilter.mesh;
-
-            if (meshData && meshData.mesh)
+            if (meshFilter)
             {
-                Mesh mesh = meshData.mesh;
+                Mesh mesh = meshFilter.mesh;
+
+            // if (meshData && meshData.mesh)
+            // {
+                // Mesh mesh = meshData.mesh;
                 Vector3[] vertices = mesh.vertices;
                 Transform transform = renderer.transform;
 

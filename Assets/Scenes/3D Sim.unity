@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdfe3008efbf29745879ab1d40574478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: 638bb1bdb9b8e374e8a5cbcd595e3973, type: 3}
+  shader: {fileID: 4800000, guid: 5c1fc5751bd8c4846ab0c5f38b0cbeb8, type: 3}
   scale: 0.03
   col: {r: 0.27803493, g: 0.49487686, b: 0.8301887, a: 1}
   colourMap:
@@ -306,10 +306,10 @@ MonoBehaviour:
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 16885
-    ctime2: 32151
-    ctime3: 50346
+    ctime0: 13107
+    ctime1: 26214
+    ctime2: 39321
+    ctime3: 52428
     ctime4: 65535
     ctime5: 0
     ctime6: 0
@@ -354,7 +354,7 @@ MonoBehaviour:
   centre: {x: 10, y: 0, z: 0}
   size: 5
   initialVel:
-    x: -10
+    x: -8
     y: 0
     z: 0
   jitterStrength: 0.05
@@ -540,7 +540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d582f7eb16f9ca8429fe21ccf9d28854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshData: {fileID: 11400000, guid: 56259da4bc4d73149b628f72fbfd1e68, type: 2}
   subdivisions: 10
 --- !u!114 &845413737
 MonoBehaviour:
@@ -554,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19a158b76322376459903b67fb19f302, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  count: 5
+  count: 7
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

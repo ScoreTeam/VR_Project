@@ -31,6 +31,8 @@ public class Simulation3D : MonoBehaviour
     // Buffers
     public ComputeBuffer positionBuffer { get; private set; }
     public ComputeBuffer initPositionBuffer { get; private set; }
+    public ComputeBuffer prepositionBuffer { get; private set; }
+    public ComputeBuffer crrpositionBuffer { get; private set; }
     public ComputeBuffer velocityBuffer { get; private set; }
     public ComputeBuffer initVelocityBuffer { get; private set; }
     public ComputeBuffer densityBuffer { get; private set; }
@@ -60,6 +62,7 @@ public class Simulation3D : MonoBehaviour
     bool pauseNextFrame;
     Spawner3D.SpawnData spawnData;
     private static BVHManager bvhManager;
+    private float PreTime = 0;
 
     void Awake()
     {
@@ -100,6 +103,8 @@ public class Simulation3D : MonoBehaviour
         int numParticles = spawnData.points.Length;
         positionBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
         initPositionBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
+        prepositionBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
+        crrpositionBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
         predictedPositionsBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
         velocityBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
         initVelocityBuffer = ComputeHelper.CreateStructuredBuffer<float3>(numParticles);
@@ -115,6 +120,8 @@ public class Simulation3D : MonoBehaviour
 
         // Init compute
         ComputeHelper.SetBuffer(compute, positionBuffer, "Positions", externalForcesKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, prepositionBuffer, "PrePositions", externalForcesKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, crrpositionBuffer, "CrrPositions", externalForcesKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, initPositionBuffer, "InitPositions", externalForcesKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, predictedPositionsBuffer, "PredictedPositions", externalForcesKernel, spatialHashKernel, densityKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, spatialIndices, "SpatialIndices", spatialHashKernel, densityKernel, pressureKernel, viscosityKernel);
@@ -191,6 +198,12 @@ public class Simulation3D : MonoBehaviour
             float timeStep = frameTime / iterationsPerFrame * timeScale;
 
             UpdateSettings(timeStep);
+            float t = Time.realtimeSinceStartup;
+            if (t - PreTime >= 0.1)
+            {
+                PreTime = t;
+                SetPreviousPositions();
+            }
 
             for (int i = 0; i < iterationsPerFrame; i++)
             {
@@ -245,9 +258,22 @@ public class Simulation3D : MonoBehaviour
 
         positionBuffer.SetData(allPoints);
         initPositionBuffer.SetData(allPoints);
+        prepositionBuffer.SetData(allPoints);
+        crrpositionBuffer.SetData(allPoints);
         predictedPositionsBuffer.SetData(allPoints);
         velocityBuffer.SetData(spawnData.velocities);
         initVelocityBuffer.SetData(spawnData.velocities);
+    }
+
+    void SetPreviousPositions()
+    {
+        float3[] Points1 = new float3[spawnData.points.Length];
+        float3[] Points2 = new float3[spawnData.points.Length];
+
+        positionBuffer.GetData(Points1);
+        crrpositionBuffer.GetData(Points2);
+        crrpositionBuffer.SetData(Points1);
+        prepositionBuffer.SetData(Points2);
     }
 
     void HandleInput()
@@ -261,6 +287,12 @@ public class Simulation3D : MonoBehaviour
         {
             isPaused = false;
             pauseNextFrame = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            isPaused = false;
+            SetPreviousPositions();
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -303,5 +335,5 @@ public class Simulation3D : MonoBehaviour
         }
         return output;
     }
-    
+
 }

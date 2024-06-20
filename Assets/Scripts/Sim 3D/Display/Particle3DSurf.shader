@@ -24,6 +24,7 @@ Shader "Instanced/Particle3DSurf" {
 
 		#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
 			StructuredBuffer<float3> Positions;
+			StructuredBuffer<float3> PrePositions;
 			StructuredBuffer<float3> Velocities;
 			StructuredBuffer<float3> InitialVelocities;
 		#endif
@@ -62,7 +63,7 @@ Shader "Instanced/Particle3DSurf" {
         
         float velocityDifference = length(currentVelocity - initialVelocity);
 
-        if (velocityDifference > 3.0f) {
+        if (velocityDifference > 0.0f) {
             unity_ObjectToWorld._11_21_31_41 = float4(scale, 0, 0, 0);
             unity_ObjectToWorld._12_22_32_42 = float4(0, scale, 0, 0);
             unity_ObjectToWorld._13_23_33_43 = float4(0, 0, scale, 0);

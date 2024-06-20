@@ -270,7 +270,7 @@ MonoBehaviour:
   iterationsPerFrame: 3
   gravity: -0.0098
   collisionDamping: 0.95
-  smoothingRadius: 0.2
+  smoothingRadius: 0.1
   targetDensity: 400
   pressureMultiplier: 268.7
   nearPressureMultiplier: 10
@@ -293,24 +293,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdfe3008efbf29745879ab1d40574478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shader: {fileID: 4800000, guid: 638bb1bdb9b8e374e8a5cbcd595e3973, type: 3}
-  scale: 0.05
+  shader: {fileID: 4800000, guid: 5c1fc5751bd8c4846ab0c5f38b0cbeb8, type: 3}
+  scale: 0.03
   col: {r: 0.27803493, g: 0.49487686, b: 0.8301887, a: 1}
   colourMap:
     serializedVersion: 2
     key0: {r: 0.13363299, g: 0.34235913, b: 0.7264151, a: 1}
     key1: {r: 0.2980392, g: 1, b: 0.56327766, a: 1}
     key2: {r: 1, g: 0.9309917, b: 0, a: 0}
-    key3: {r: 0.96862745, g: 0.28555763, b: 0.031372573, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 1.0087862, g: 0.8588236, b: 0.007843138, a: 0}
+    key4: {r: 0.96862745, g: 0.28555763, b: 0.031372573, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 4064
-    ctime1: 33191
-    ctime2: 46738
-    ctime3: 65535
-    ctime4: 0
+    ctime0: 13107
+    ctime1: 26214
+    ctime2: 39321
+    ctime3: 52428
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
@@ -324,11 +324,11 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 2
     m_ColorSpace: -1
-    m_NumColorKeys: 4
+    m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   gradientResolution: 50
   velocityDisplayMax: 8
-  meshResolution: 3
+  meshResolution: 1
   debug_MeshTriCount: 2
 --- !u!33 &271053322
 MeshFilter:
@@ -350,16 +350,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99a384512b94654fbeb7c06c43f81ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numParticlesPerAxis: 35
-  centre: {x: -10, y: 1, z: 0}
-  size: 6
+  numParticlesPerAxis: 40
+  centre: {x: 10, y: 0, z: 0}
+  size: 5
   initialVel:
-    x: 6
+    x: -8
     y: 0
     z: 0
   jitterStrength: 0.05
   showSpawnBounds: 1
-  debug_numParticles: 42875
+  debug_numParticles: 64000
 --- !u!1 &620375867
 GameObject:
   m_ObjectHideFlags: 0
@@ -454,8 +454,8 @@ GameObject:
   - component: {fileID: 845413735}
   - component: {fileID: 845413734}
   - component: {fileID: 845413733}
-  - component: {fileID: 845413732}
-  - component: {fileID: 845413731}
+  - component: {fileID: 845413737}
+  - component: {fileID: 845413736}
   m_Layer: 0
   m_Name: car2
   m_TagString: Untagged
@@ -463,33 +463,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &845413731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 845413730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d582f7eb16f9ca8429fe21ccf9d28854, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshData: {fileID: 11400000, guid: 56259da4bc4d73149b628f72fbfd1e68, type: 2}
-  subdivisions: 30
---- !u!114 &845413732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 845413730}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19a158b76322376459903b67fb19f302, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  count: 10
 --- !u!23 &845413733
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -555,6 +528,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &845413736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845413730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d582f7eb16f9ca8429fe21ccf9d28854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  subdivisions: 10
+--- !u!114 &845413737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845413730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19a158b76322376459903b67fb19f302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  count: 7
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

@@ -147,6 +147,7 @@ public class Simulation3D : MonoBehaviour
         if (bvhManager != null)
         {
             // Access the list of boxes
+            bvhManager.Initialize();
             List<BoxNode> boxes = bvhManager.GetBoxes();
             BoxNode[] boxesArray = boxes.ToArray();
             // // Process the boxes

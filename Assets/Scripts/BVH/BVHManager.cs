@@ -1,22 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-
 
 public class BVHManager : MonoBehaviour
 {
-    private BVHTree bvhTree;
+    private BVHTree bvhTree = new BVHTree();
     private List<BVHObject> managedObjects;
-    private List<BoxNode> boxes;
+    private List<BoxNode> boxes = new List<BoxNode>();
 
     [SerializeField] public int count = 5;
 
-    void Start()
+    public void Initialize()
     {
-        bvhTree = new BVHTree();
-
         managedObjects = new List<BVHObject>(FindObjectsOfType<BVHObject>());
-        boxes = new List<BoxNode>();
 
         // Insert all managed objects into the BVH
         foreach (var obj in managedObjects)
@@ -30,9 +25,8 @@ public class BVHManager : MonoBehaviour
         {
             DrawNodeGizmos(bvhTree.Root, 0);
 
-            Debug.Log($"boxes number: {boxes.Count}");
+            Debug.Log($"Initialize boxes number: {boxes.Count}");
         }
-
     }
 
     void Update()
@@ -63,7 +57,7 @@ public class BVHManager : MonoBehaviour
 
         // DrawNodeGizmos(bvhTree.Root, 0);
 
-        // Debug.Log($"boxes number: {boxes.Count}");
+        // Debug.Log($"OnDrawGizmos boxes number: {boxes.Count}");
 
         // foreach (var obj in managedObjects)
         // {
@@ -108,6 +102,7 @@ public class BVHManager : MonoBehaviour
 
     public List<BoxNode> GetBoxes()
     {
+        Debug.Log($"GetBoxes boxes number: {boxes.Count}");
         return boxes;
     }
 

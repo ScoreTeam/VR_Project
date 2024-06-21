@@ -1,23 +1,20 @@
 using System.Collections.Generic;
-// using Unity.VisualScripting;
 using UnityEngine;
 
 public class BVHObject : MonoBehaviour
 {
-    public List<AABB> BoundingBoxes;
+    public List<AABB> BoundingBoxes= new List<AABB>();
     public List<AABB> AllBoxes;
-    // public MeshData meshData;
-    [SerializeField] public int subdivisions = 5; // You can adjust this for more/less accuracy
-
-    void Start()
-    {
-        BoundingBoxes = new List<AABB>();
-        UpdateBoundingBoxes();
-    }
+    [SerializeField] public int subdivisions = 10; // You can adjust this for more/less accuracy
 
     void Update()
     {
         // UpdateBoundingBoxes();
+    }
+
+    public void Initialize()
+    {
+        UpdateBoundingBoxes();
     }
 
     public void UpdateBoundingBoxes()
@@ -36,10 +33,6 @@ public class BVHObject : MonoBehaviour
             if (meshFilter)
             {
                 Mesh mesh = meshFilter.mesh;
-
-            // if (meshData && meshData.mesh)
-            // {
-                // Mesh mesh = meshData.mesh;
                 Vector3[] vertices = mesh.vertices;
                 Transform transform = renderer.transform;
 
@@ -87,32 +80,3 @@ public class BVHObject : MonoBehaviour
         return false;
     }
 }
-
-
-// public void UpdateBoundingBoxes()
-//     {
-//         BoundingBoxes.Clear();
-
-//         // Assuming the object has a Renderer component
-//         Renderer renderer = GetComponent<Renderer>();
-//         if (renderer)
-//         {
-//             MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
-
-//             if (meshFilter)
-//             {
-//                 Mesh mesh = meshFilter.mesh;
-//                 Vector3[] vertices = mesh.vertices;
-//                 Transform transform = renderer.transform;
-
-//                 foreach (var vertex in vertices)
-//                 {
-//                     Vector3 worldVertex = transform.TransformPoint(vertex);
-//                     Vector3 min = worldVertex - Vector3.one * (boxSize / 2);
-//                     Vector3 max = worldVertex + Vector3.one * (boxSize / 2);
-//                     AABB aabb = new AABB(min, max);
-//                     BoundingBoxes.Add(aabb);
-//                 }
-//             }
-//         }
-//     }

@@ -93,7 +93,7 @@ public class Simulation3D : MonoBehaviour
     {
         Debug.Log("Controls: Space = Play/Pause, R = Reset");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
-        Application.targetFrameRate = 60;
+        // Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
         Time.fixedDeltaTime = deltaTime;
 
@@ -131,8 +131,8 @@ public class Simulation3D : MonoBehaviour
         ComputeHelper.SetBuffer(compute, velocityBuffer, "Velocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, initVelocityBuffer, "InitVelocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
 
-        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters", collisionDetection, viscosityKernel, updatePositionsKernel);
-        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes", collisionDetection, viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters",  viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes",  viscosityKernel, updatePositionsKernel);
 
         ComputeHelper.SetBuffer(compute, pointsBool, "PointsBool", externalForcesKernel, spatialHashKernel, densityKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         compute.SetInt("numParticles", positionBuffer.count);
@@ -147,6 +147,7 @@ public class Simulation3D : MonoBehaviour
         if (bvhManager != null)
         {
             // Access the list of boxes
+            bvhManager.Initialize();
             List<BoxNode> boxes = bvhManager.GetBoxes();
             BoxNode[] boxesArray = boxes.ToArray();
             // // Process the boxes

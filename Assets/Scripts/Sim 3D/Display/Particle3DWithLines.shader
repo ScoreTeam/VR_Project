@@ -9,6 +9,7 @@ Shader "Instanced/Particle3DWithLines" {
 
             CGPROGRAM
 
+            #pragma require geometry
             #pragma vertex vert
             #pragma geometry geom
             #pragma fragment frag

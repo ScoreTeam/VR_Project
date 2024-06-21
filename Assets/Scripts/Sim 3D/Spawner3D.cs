@@ -20,7 +20,6 @@ public class Spawner3D : MonoBehaviour
         float3[] points = new float3[numPoints];
         float3[] velocities = new float3[numPoints];
 
-        int i = 0;
         if (Math.Pow(numParticlesPerAxis, 3) >= numPoints)
         {
             numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 3.0);

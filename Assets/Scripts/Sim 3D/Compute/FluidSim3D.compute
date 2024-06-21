@@ -4,7 +4,7 @@
 #pragma kernel CalculatePressureForce
 #pragma kernel CalculateViscosity
 #pragma kernel UpdatePositions
-#pragma kernel collisionDetection
+// #pragma kernel collisionDetection
 
 // Includes
 #include "./FluidMaths3D.hlsl"

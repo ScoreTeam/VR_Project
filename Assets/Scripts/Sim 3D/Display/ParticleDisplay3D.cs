@@ -15,8 +15,8 @@ public class ParticleDisplay3D : MonoBehaviour
     public Gradient colourMap;
     public int gradientResolution;
     public float velocityDisplayMax;
-    Texture2D gradientTexture;
-    Texture2D noiseTexture;
+    // Texture2D gradientTexture;
+    public Texture2D gradientTexture;
     bool needsUpdate;
 
     public int meshResolution;
@@ -49,7 +49,7 @@ public class ParticleDisplay3D : MonoBehaviour
         if (needsUpdate)
         {
             needsUpdate = false;
-            TextureFromGradient(ref gradientTexture, gradientResolution, colourMap);
+            // TextureFromGradient(ref gradientTexture, gradientResolution, colourMap);
             mat.SetTexture("ColourMap", gradientTexture);
         }
         mat.SetFloat("scale", scale);

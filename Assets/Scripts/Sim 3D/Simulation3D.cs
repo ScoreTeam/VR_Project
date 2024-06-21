@@ -131,8 +131,8 @@ public class Simulation3D : MonoBehaviour
         ComputeHelper.SetBuffer(compute, velocityBuffer, "Velocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, initVelocityBuffer, "InitVelocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
 
-        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters", collisionDetection, viscosityKernel, updatePositionsKernel);
-        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes", collisionDetection, viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters",  viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes",  viscosityKernel, updatePositionsKernel);
 
         ComputeHelper.SetBuffer(compute, pointsBool, "PointsBool", externalForcesKernel, spatialHashKernel, densityKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         compute.SetInt("numParticles", positionBuffer.count);

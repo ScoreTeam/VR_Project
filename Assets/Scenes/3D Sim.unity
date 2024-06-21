@@ -328,6 +328,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   gradientResolution: 50
   velocityDisplayMax: 8
+  gradientTexture: {fileID: 2800000, guid: 980d027cc8862c3499e26924c6e058a3, type: 3}
   meshResolution: 1
   debug_MeshTriCount: 2
 --- !u!33 &271053322

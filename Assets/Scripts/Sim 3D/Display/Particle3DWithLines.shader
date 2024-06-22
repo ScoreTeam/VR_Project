@@ -24,6 +24,7 @@ Shader "Instanced/Particle3DWithLines" {
             Texture2D<float4> ColourMap;
             SamplerState linear_clamp_sampler;
             float velocityMax;
+            float velocityDif;
 
             float scale;
             float3 colour;
@@ -74,7 +75,7 @@ Shader "Instanced/Particle3DWithLines" {
 
                 float velocityDifference = length(currentVelocity - initialVelocity);
 
-                if (velocityDifference >= 1.0f) {
+                if (velocityDifference >= velocityDif) {
                     geomOut vertex;
 
                     vertex.pos = UnityObjectToClipPos(float4(pos, 1.0));

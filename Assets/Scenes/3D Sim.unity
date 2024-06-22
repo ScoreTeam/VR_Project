@@ -328,7 +328,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   gradientResolution: 50
   velocityDisplayMax: 8
-  gradientTexture: {fileID: 2800000, guid: 980d027cc8862c3499e26924c6e058a3, type: 3}
+  velocityDisplayDif: 1
   meshResolution: 1
   debug_MeshTriCount: 2
 --- !u!33 &271053322
@@ -351,17 +351,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99a384512b94654fbeb7c06c43f81ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numParticlesPerAxis: 15
+  numParticlesPerAxis: 16
   numPoints: 64000
   centre: {x: 10, y: 0, z: 0}
-  size: 3
+  size: 3.5
   initialVel:
     x: -8
     y: 0
     z: 0
   jitterStrength: 0.05
   showSpawnBounds: 1
-  debug_numParticles: 3375
+  debug_numParticles: 4096
 --- !u!1 &620375867
 GameObject:
   m_ObjectHideFlags: 0

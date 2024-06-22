@@ -131,8 +131,8 @@ public class Simulation3D : MonoBehaviour
         ComputeHelper.SetBuffer(compute, velocityBuffer, "Velocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         ComputeHelper.SetBuffer(compute, initVelocityBuffer, "InitVelocities", externalForcesKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
 
-        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters",  viscosityKernel, updatePositionsKernel);
-        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes",  viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesCenters, "ObCenters", viscosityKernel, updatePositionsKernel);
+        ComputeHelper.SetBuffer(compute, ObBoxesSizes, "ObSizes", viscosityKernel, updatePositionsKernel);
 
         ComputeHelper.SetBuffer(compute, pointsBool, "PointsBool", externalForcesKernel, spatialHashKernel, densityKernel, pressureKernel, viscosityKernel, updatePositionsKernel);
         compute.SetInt("numParticles", positionBuffer.count);
@@ -309,7 +309,7 @@ public class Simulation3D : MonoBehaviour
         prepositionBuffer.GetData(PRE);
         crrpositionBuffer.GetData(CRR);
         pointsBool.GetData(B);
-        if (layerCount +genData.points.Length >= positionBuffer.count)
+        if (layerCount + genData.points.Length >= positionBuffer.count)
         {
             layerCount = 0;
         }
@@ -359,7 +359,7 @@ public class Simulation3D : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            isPaused = false;
+            // isPaused = false;
             // SetNewLayer();
         }
 
@@ -367,6 +367,14 @@ public class Simulation3D : MonoBehaviour
         {
             isPaused = true;
             SetInitialBufferData(spawnData);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 

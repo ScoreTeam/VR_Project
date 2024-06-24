@@ -7,16 +7,16 @@ public class Simulation3D : MonoBehaviour
     public event System.Action SimulationStepCompleted;
 
     [Header("Settings")]
-    public float timeScale = 1;
-    public bool fixedTimeStep;
-    public int iterationsPerFrame;
-    public float gravity = -10;
-    [Range(0, 1)] public float collisionDamping = 0.05f;
-    public float smoothingRadius = 0.2f;
-    public float targetDensity;
-    public float pressureMultiplier;
-    public float nearPressureMultiplier;
-    public float viscosityStrength;
+    public float timeScale = 0.5f;
+    public bool fixedTimeStep = true;
+    public int iterationsPerFrame = 3;
+    public float mass = -0.0098f;
+    [Range(0, 1)] public float collisionDamping = 0.95f;
+    public float smoothingRadius = 0.1f;
+    public float targetDensity = 400;
+    public float pressureMultiplier = 268f;
+    public float nearPressureMultiplier = 10;
+    public float viscosityStrength = 0.01f;
 
     private static Vector3[] obstacleCentres;
     private static Vector3[] obstacleSizes;
@@ -91,7 +91,7 @@ public class Simulation3D : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log("Controls: Space = Play/Pause, R = Reset");
+        Debug.Log("Controls: Space = Play/Pause, R = Reset,Right Arrow = Next frame, Esc = Quit");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
         // Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
@@ -239,7 +239,7 @@ public class Simulation3D : MonoBehaviour
         // Vector3 simBoundsCentre = transform.position;
 
         compute.SetFloat("deltaTime", deltaTime);
-        compute.SetFloat("gravity", gravity);
+        compute.SetFloat("mass", mass);
         compute.SetFloat("collisionDamping", collisionDamping);
         compute.SetFloat("smoothingRadius", smoothingRadius);
         compute.SetFloat("targetDensity", targetDensity);
@@ -350,19 +350,6 @@ public class Simulation3D : MonoBehaviour
         {
             isPaused = !isPaused;
         }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            isPaused = false;
-            pauseNextFrame = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            // isPaused = false;
-            // SetNewLayer();
-        }
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             isPaused = true;

@@ -32,7 +32,7 @@ RWStructuredBuffer<uint> PointsBool;
 
 // Settings
 const uint numParticles;
-const float gravity;
+const float mass;
 const float deltaTime;
 const float collisionDamping;
 const float smoothingRadius;
@@ -155,7 +155,7 @@ void ExternalForces (uint3 id : SV_DispatchThreadID)
 	if (PointsBool[id.x] == 1)
 	{
 	// External forces (gravity)
-	Velocities[id.x] += float3(0, gravity, 0) * deltaTime;
+	Velocities[id.x] += mass * float3(0, -9.8, 0) * deltaTime;
 
 	// Predict
 	PredictedPositions[id.x] = Positions[id.x] + Velocities[id.x] * 1 / 120.0;

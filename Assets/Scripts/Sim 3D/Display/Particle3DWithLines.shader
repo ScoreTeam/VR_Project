@@ -54,8 +54,19 @@ Shader "Instanced/Particle3DWithLines" {
 
                 float speed = length(Velocities[instanceID]);
                 float speedT = saturate(speed / velocityMax);
-                float colT = speedT;
-                o.colour = ColourMap.SampleLevel(linear_clamp_sampler, float2(colT, 0.5), 0).rgb;
+
+                float3 blue = float3(0.0, 0.0, 1.0);
+                float3 green = float3(0.0, 1.0, 0.0);
+                float3 yellow = float3(1.0, 1.0, 0.0);
+                float3 red = float3(1.0, 0.0, 0.0);
+
+                if (speedT < 0.33) {
+                    o.colour = lerp(blue, green, smoothstep(0.0, 0.33, speedT));
+                } else if (speedT < 0.66) {
+                    o.colour = lerp(green, yellow, smoothstep(0.33, 0.66, speedT));
+                } else {
+                    o.colour = lerp(yellow, red, smoothstep(0.66, 1.0, speedT));
+                }
 
                 return o;
             }

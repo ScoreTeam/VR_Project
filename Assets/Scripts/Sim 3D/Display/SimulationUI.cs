@@ -4,9 +4,11 @@ using UnityEngine.UI;
 public class SimulationUI : MonoBehaviour
 {
     public Simulation3D simulation;
+    public ParticleDisplay3D ParticleDisplay;
+    public Spawner3D spawner;
 
     public Slider timeScaleSlider;
-    public InputField iterationsPerFrameInput;
+    public InputField velocityDisplayDif;
     public InputField massInput;
     public Slider collisionDampingSlider;
     public InputField smoothingRadiusInput;
@@ -15,11 +17,19 @@ public class SimulationUI : MonoBehaviour
     public InputField nearPressureMultiplierInput;
     public InputField viscosityStrengthInput;
 
+    // New UI elements for the Spawner3D
+    public Slider numParticlesPerAxisSlider;
+    public InputField numPointsInput;
+    public InputField centreInput;
+    public Slider sizeSlider;
+    public InputField initialVelInput;
+    public Slider jitterStrengthSlider;
+    public InputField debug_numParticles;
     void Start()
     {
-        // Set initial values
+        // Set initial values for simulation parameters
         timeScaleSlider.value = simulation.timeScale;
-        iterationsPerFrameInput.text = simulation.iterationsPerFrame.ToString();
+        velocityDisplayDif.text = ParticleDisplay.velocityDisplayDif.ToString();
         massInput.text = simulation.mass.ToString();
         collisionDampingSlider.value = simulation.collisionDamping;
         smoothingRadiusInput.text = simulation.smoothingRadius.ToString();
@@ -28,9 +38,18 @@ public class SimulationUI : MonoBehaviour
         nearPressureMultiplierInput.text = simulation.nearPressureMultiplier.ToString();
         viscosityStrengthInput.text = simulation.viscosityStrength.ToString();
 
-        // Add listeners
+        // Set initial values for spawner parameters
+        numParticlesPerAxisSlider.value = spawner.numParticlesPerAxis;
+        numPointsInput.text = spawner.numPoints.ToString();
+        centreInput.text = spawner.centre.x.ToString();
+        sizeSlider.value = spawner.size;
+        initialVelInput.text = spawner.initialVel.x.ToString();
+        jitterStrengthSlider.value = spawner.jitterStrength;
+        debug_numParticles.text = spawner.debug_numParticles.ToString();
+
+        // Add listeners for simulation parameters
         timeScaleSlider.onValueChanged.AddListener(OnTimeScaleChanged);
-        iterationsPerFrameInput.onEndEdit.AddListener(OnIterationsPerFrameChanged);
+        velocityDisplayDif.onEndEdit.AddListener(OnVelocityDisplayDifChanged);
         massInput.onEndEdit.AddListener(OnMassChanged);
         collisionDampingSlider.onValueChanged.AddListener(OnCollisionDampingChanged);
         smoothingRadiusInput.onEndEdit.AddListener(OnSmoothingRadiusChanged);
@@ -38,6 +57,14 @@ public class SimulationUI : MonoBehaviour
         pressureMultiplierInput.onEndEdit.AddListener(OnPressureMultiplierChanged);
         nearPressureMultiplierInput.onEndEdit.AddListener(OnNearPressureMultiplierChanged);
         viscosityStrengthInput.onEndEdit.AddListener(OnViscosityStrengthChanged);
+
+        // Add listeners for spawner parameters
+        numParticlesPerAxisSlider.onValueChanged.AddListener(OnNumParticlesPerAxisChanged);
+        numPointsInput.onEndEdit.AddListener(OnNumPointsChanged);
+        centreInput.onEndEdit.AddListener(OnCentreChanged);
+        sizeSlider.onValueChanged.AddListener(OnSizeChanged);
+        initialVelInput.onEndEdit.AddListener(OnInitialVelChanged);
+        jitterStrengthSlider.onValueChanged.AddListener(OnJitterStrengthChanged);
     }
 
     void OnTimeScaleChanged(float value)
@@ -45,16 +72,11 @@ public class SimulationUI : MonoBehaviour
         simulation.timeScale = value;
     }
 
-    void OnFixedTimeStepChanged(bool value)
-    {
-        simulation.fixedTimeStep = value;
-    }
-
-    void OnIterationsPerFrameChanged(string value)
+    void OnVelocityDisplayDifChanged(string value)
     {
         if (int.TryParse(value, out int result))
         {
-            simulation.iterationsPerFrame = result;
+            ParticleDisplay.velocityDisplayDif = result;
         }
     }
 
@@ -110,4 +132,48 @@ public class SimulationUI : MonoBehaviour
             simulation.viscosityStrength = result;
         }
     }
+
+    void OnNumParticlesPerAxisChanged(float value)
+    {
+        spawner.numParticlesPerAxis = (int)value;
+    }
+
+    void OnNumPointsChanged(string value)
+    {
+        if (int.TryParse(value, out int result))
+        {
+            spawner.numPoints = result;
+        }
+    }
+
+    void OnCentreChanged(string value)
+    {
+        if (float.TryParse(value, out float result))
+        {
+            spawner.centre.x = result;
+        }
+    }
+
+    void OnSizeChanged(float value)
+    {
+        spawner.size = value;
+    }
+
+    void OnInitialVelChanged(string value)
+    {
+        if (float.TryParse(value, out float result))
+        {
+            spawner.initialVel.x = -result;
+        }
+    }
+
+    void OnJitterStrengthChanged(float value)
+    {
+        spawner.jitterStrength = value;
+    }
+
+    void Update(){
+        debug_numParticles.text = spawner.debug_numParticles.ToString();
+    }
+
 }

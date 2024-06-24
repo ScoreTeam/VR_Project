@@ -25,7 +25,7 @@ public class BVHManager : MonoBehaviour
         {
             DrawNodeGizmos(bvhTree.Root, 0);
 
-            Debug.Log($"Initialize boxes number: {boxes.Count}");
+            // Debug.Log($"Initialize boxes number: {boxes.Count}");
         }
     }
 

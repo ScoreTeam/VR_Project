@@ -20,11 +20,8 @@ public class Spawner3D : MonoBehaviour
         float3[] points = new float3[numPoints];
         float3[] velocities = new float3[numPoints];
 
-        if (Math.Pow(numParticlesPerAxis, 3) >= numPoints)
-        {
-            numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 3.0);
-            OnValidate();
-        }
+        OnValidate();
+
         // for (int x = 0; x < numParticlesPerAxis; x++)
         // {
         //     for (int y = 0; y < numParticlesPerAxis; y++)
@@ -62,6 +59,7 @@ public class Spawner3D : MonoBehaviour
         float3[] points = new float3[numPoints2];
         float3[] velocities = new float3[numPoints2];
 
+        OnValidate();
         int i = 0;
         for (int x = 0; x < numParticlesPerAxis; x++)
         {
@@ -95,6 +93,10 @@ public class Spawner3D : MonoBehaviour
 
     void OnValidate()
     {
+        if (Math.Pow(numParticlesPerAxis, 3) >= numPoints)
+        {
+            numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 3.0);
+        }
         debug_numParticles = numParticlesPerAxis * numParticlesPerAxis * numParticlesPerAxis;
     }
 

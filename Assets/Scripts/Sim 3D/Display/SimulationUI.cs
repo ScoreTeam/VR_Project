@@ -17,7 +17,6 @@ public class SimulationUI : MonoBehaviour
     public InputField nearPressureMultiplierInput;
     public InputField viscosityStrengthInput;
 
-    // New UI elements for the Spawner3D
     public Slider numParticlesPerAxisSlider;
     public InputField numPointsInput;
     public InputField centreInput;
@@ -27,7 +26,6 @@ public class SimulationUI : MonoBehaviour
     public InputField debug_numParticles;
     void Start()
     {
-        // Set initial values for simulation parameters
         timeScaleSlider.value = simulation.timeScale;
         velocityDisplayDif.text = ParticleDisplay.velocityDisplayDif.ToString();
         massInput.text = simulation.mass.ToString();
@@ -38,7 +36,6 @@ public class SimulationUI : MonoBehaviour
         nearPressureMultiplierInput.text = simulation.nearPressureMultiplier.ToString();
         viscosityStrengthInput.text = simulation.viscosityStrength.ToString();
 
-        // Set initial values for spawner parameters
         numParticlesPerAxisSlider.value = spawner.numParticlesPerAxis;
         numPointsInput.text = spawner.numPoints.ToString();
         centreInput.text = spawner.centre.x.ToString();
@@ -47,7 +44,6 @@ public class SimulationUI : MonoBehaviour
         jitterStrengthSlider.value = spawner.jitterStrength;
         debug_numParticles.text = spawner.debug_numParticles.ToString();
 
-        // Add listeners for simulation parameters
         timeScaleSlider.onValueChanged.AddListener(OnTimeScaleChanged);
         velocityDisplayDif.onEndEdit.AddListener(OnVelocityDisplayDifChanged);
         massInput.onEndEdit.AddListener(OnMassChanged);
@@ -58,7 +54,6 @@ public class SimulationUI : MonoBehaviour
         nearPressureMultiplierInput.onEndEdit.AddListener(OnNearPressureMultiplierChanged);
         viscosityStrengthInput.onEndEdit.AddListener(OnViscosityStrengthChanged);
 
-        // Add listeners for spawner parameters
         numParticlesPerAxisSlider.onValueChanged.AddListener(OnNumParticlesPerAxisChanged);
         numPointsInput.onEndEdit.AddListener(OnNumPointsChanged);
         centreInput.onEndEdit.AddListener(OnCentreChanged);

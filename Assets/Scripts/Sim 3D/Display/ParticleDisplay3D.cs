@@ -15,8 +15,8 @@ public class ParticleDisplay3D : MonoBehaviour
     public Gradient colourMap;
     public int gradientResolution;
     public float velocityDisplayMax;
-    // Texture2D gradientTexture;
-    public Texture2D gradientTexture;
+    public float velocityDisplayDif = 1.0f;
+    Texture2D gradientTexture;
     bool needsUpdate;
 
     public int meshResolution;
@@ -49,12 +49,22 @@ public class ParticleDisplay3D : MonoBehaviour
         if (needsUpdate)
         {
             needsUpdate = false;
-            // TextureFromGradient(ref gradientTexture, gradientResolution, colourMap);
+            TextureFromGradient(ref gradientTexture, gradientResolution, colourMap);
+            // gradientTexture = Resources.Load<Texture2D>("GradientTexture");
+            //     if (gradientTexture == null)
+            //     {
+            //         Debug.LogError("Failed to load gradient texture from Resources.");
+            //     }
+            //     else
+            //     {
+            //         Debug.Log("Gradient texture loaded successfully.");
+            //     }
             mat.SetTexture("ColourMap", gradientTexture);
         }
         mat.SetFloat("scale", scale);
         mat.SetColor("colour", col);
         mat.SetFloat("velocityMax", velocityDisplayMax);
+        mat.SetFloat("velocityDif", velocityDisplayDif);
 
         Vector3 s = transform.localScale;
         transform.localScale = Vector3.one;

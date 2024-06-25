@@ -159,6 +159,7 @@ public class SimulationUI : MonoBehaviour
         if (float.TryParse(value, out float result))
         {
             spawner.initialVel.x = -result;
+            ParticleDisplay.velocityDisplayMax = result;
         }
     }
 

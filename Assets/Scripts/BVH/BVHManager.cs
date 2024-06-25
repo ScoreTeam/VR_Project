@@ -6,7 +6,7 @@ public class BVHManager : MonoBehaviour
     private BVHTree bvhTree = new BVHTree();
     private List<BVHObject> managedObjects;
     private List<BoxNode> boxes = new List<BoxNode>();
-
+    // int t1, t2 = 0;
     [SerializeField] public int count = 5;
 
     public void Initialize()
@@ -31,16 +31,18 @@ public class BVHManager : MonoBehaviour
 
     void Update()
     {
-        // Rebuild the BVH every frame for simplicity (could be optimized)
-        // boxes = new List<BoxNode>();
-        // bvhTree = new BVHTree();
+        //         t1= Time.realtimeSinceStartup();
+        // if
+        //         // Rebuild the BVH every frame for simplicity (could be optimized)
+        //         boxes = new List<BoxNode>();
+        //         bvhTree = new BVHTree();
 
-        // foreach (var obj in managedObjects)
-        // {
-        //     obj.UpdateBoundingBoxes();
-        //     foreach (var BoundingBox in obj.BoundingBoxes)
-        //         bvhTree.Insert(obj.gameObject, BoundingBox);
-        // }
+        //         foreach (var obj in managedObjects)
+        //         {
+        //             obj.UpdateBoundingBoxes();
+        //             foreach (var BoundingBox in obj.BoundingBoxes)
+        //                 bvhTree.Insert(obj.gameObject, BoundingBox);
+        //         }
     }
 
     public List<GameObject> Query(AABB queryBox)

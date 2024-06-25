@@ -93,7 +93,7 @@ public class Simulation3D : MonoBehaviour
     {
         Debug.Log("Controls: Space = Play/Pause, R = Reset,Right Arrow = Next frame, Esc = Quit");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
-        // Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
         Time.fixedDeltaTime = deltaTime;
 
@@ -198,7 +198,7 @@ public class Simulation3D : MonoBehaviour
             float timeStep = frameTime / iterationsPerFrame * timeScale;
 
             UpdateSettings(timeStep);
-            float t = Time.realtimeSinceStartup;
+            float t = Time.frameCount * Time.fixedDeltaTime;
 
             if (t - PreTime >= 0.1f)
             {
@@ -206,7 +206,7 @@ public class Simulation3D : MonoBehaviour
                 SetPreviousPositions();
             }
 
-            if (t - PreTime2 >= 1.0f)
+            if (t - PreTime2 >= 0.1f)
             {
                 PreTime2 = t;
                 SetNewLayer();

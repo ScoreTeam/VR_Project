@@ -6,6 +6,7 @@ using System.Linq;
 
 public class MassSpringSystem : MonoBehaviour
 {
+    public bool isDeforming = false;
     // Mass point structure
     public struct MassPoint
     {
@@ -48,14 +49,11 @@ public class MassSpringSystem : MonoBehaviour
 
     public float mass = 0.01f;
     public float stiffness = 0.01f;
-    public float damping = -0.007f;
-    public float springLength = 10f;
-    public int k = 8; // Number of nearest neighbors to connect to 
+    public float damping = -0.009f;
+    public int k = 15; // Number of nearest neighbors to connect to 
     public int effectedVertexIndex = 0;
-    public Vector3 externalForce = new Vector3(0, 0, 0.5f);
-    public Vector3 gravity = new Vector3(0, -9.81f, 0);
-
-    private List<MassPoint> massPoints = new List<MassPoint>();
+    public Vector3 externalForce = new Vector3(0.5f, 0, 0);
+    public List<MassPoint> massPoints = new List<MassPoint>();
     private Vector3[] vertices;
     private List<Spring> springs = new List<Spring>();
     private int count = 0;
@@ -69,57 +67,27 @@ public class MassSpringSystem : MonoBehaviour
 
         InitializeMassPointsList();
         InitializeSprings();
-
-
     }
 
     void Update()
     {
-        // bool isSetToDefault = false;
-        if (externalForce != new Vector3(0, 0, 0) && count % 5 == 0)
-           { apply_from_doc(Time.deltaTime);
-            // UpdateMesh();
-            }
-        // applyEuler();
-        // if (count % 5 == 0)
+         HandleInput();
 
-        // if (externalForce != new Vector3(0, 0, 0))
-        // {
-        //     while (isSetToDefault == false)
-        //     {
-        //         for (int i = 0; i < massPoints.Count; i++)
-        //         {
-        //             MassPoint mass_point = massPoints[i];
-        //             mass_point.velocity = mass_point.velocity + (Time.deltaTime - mass_point.time) * (damping * mass_point.velocity) / mass_point.mass;
-        //             mass_point.position = mass_point.position + (Time.deltaTime - mass_point.time) * mass_point.velocity;
-
-        //             Vector3 distance = massPoints[i].restPosition - mass_point.position;
-
-        //             if (distance.magnitude > 0)
-        //                 massPoints[i] = mass_point;
-
-        //             int c = 0;
-        //             for (int j = 0; j < massPoints.Count; j++)
-        //             {
-        //                 if (massPoints[j].position == massPoints[j].restPosition)
-        //                 {
-        //                     c++;
-        //                 }
-        //                 if (c == massPoints.Count - 1) isSetToDefault = true;
-        //             }
-        //         }
-        //     }
-
-        // }
-        // apply_from_doc(Time.deltaTime);
-
-        // }
+        if (isDeforming && /*externalForce != new Vector3(0, 0, 0) &&*/ count % 10 == 0)
+        {
+            apply_from_doc(Time.deltaTime);
+            UpdateMesh();
+        }
         count++;
-        // UpdateMesh();
-        // ApplyForces();
-        // UpdateMassPoints(Time.deltaTime);
-        
     }
+    void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isDeforming = !isDeforming;
+        }
+    }
+
     void InitializeMassPointsList()
     {
 
@@ -168,16 +136,6 @@ public class MassSpringSystem : MonoBehaviour
         return nearestNeighbors;
     }
 
-    void applyEuler()
-    {
-        MassPoint mass_point = massPoints[effectedVertexIndex];
-
-        mass_point.position = mass_point.position + (Time.deltaTime - mass_point.time) * mass_point.velocity;
-        mass_point.velocity = mass_point.velocity + (Time.deltaTime - mass_point.time) * ((externalForce + mass_point.force) - damping * mass_point.velocity) / mass_point.mass;
-
-        massPoints[effectedVertexIndex] = mass_point;
-    }
-
     void apply_from_doc(float deltaTime)
     {
 
@@ -185,17 +143,8 @@ public class MassSpringSystem : MonoBehaviour
         MassPoint mass_point = massPoints[effectedVertexIndex];
 
         mass_point.position = mass_point.position + (deltaTime - mass_point.time) * mass_point.velocity;
-        mass_point.velocity = mass_point.velocity + (deltaTime - mass_point.time) * (externalForce + mass_point.force + damping * mass_point.velocity) / mass_point.mass;
-
-        // Vector3 difference = mass_point.position - massPoints[effectedVertexIndex].position;
-        // Debug.Log(difference.magnitude + " , " + springLength);
-
-        // if (difference.magnitude < springLength * 2 && difference.magnitude > springLength / 2)
-        // {
+        mass_point.velocity = mass_point.velocity + (deltaTime - mass_point.time) * (externalForce + damping * mass_point.velocity) / mass_point.mass;
         massPoints[effectedVertexIndex] = mass_point;
-        // }
-
-        // Debug.Log("position : " + mass_point.position + " velocity: " + mass_point.velocity);
 
         foreach (var spring in springs)
         {
@@ -206,18 +155,12 @@ public class MassSpringSystem : MonoBehaviour
             Vector3 distance = pointA.position - pointB.position;
 
 
-            if (distance.magnitude - spring.restLength != 0 && distance.magnitude < spring.restLength)
-            {// initial force
-                // Debug.Log(distance.magnitude);
-
-
-                // Debug.Log(-1 * spring.stiffness * (distance.magnitude - spring.restLength) * (pointA.position - pointB.position) / distance.magnitude);
-
+            if (distance.magnitude - spring.restLength != 0 && distance.magnitude < spring.restLength * 3 / 2)
+            {
+                // initial force
                 pointA.force = -1 * spring.stiffness * (distance.magnitude - spring.restLength) * (pointA.position - pointB.position) / distance.magnitude;
                 pointB.force = -1 * spring.stiffness * (distance.magnitude - spring.restLength) * (pointB.position - pointA.position) / distance.magnitude;
 
-                // Debug.Log("point force x: " + pointA.force.x);
-                // Debug.Log("point force: " + pointA.force + " , " + pointB.force);
 
                 // eular
                 pointA.position = pointA.position + (deltaTime - pointA.time) * pointA.velocity;
@@ -240,129 +183,59 @@ public class MassSpringSystem : MonoBehaviour
 
                 if (distance.magnitude < max_ability && distance.magnitude > min_ability)
                 {
-                pointA.force = totalForceA;
-                massPoints[spring.pointA] = pointA;
+                    pointA.force = totalForceA;
+                    massPoints[spring.pointA] = pointA;
 
-                pointB.force = totalForceB;
-                massPoints[spring.pointB] = pointB;
+                    pointB.force = totalForceB;
+                    massPoints[spring.pointB] = pointB;
                 }
             }
 
         }
-
-        // MassPoint mass_point = massPoints[effectedVertexIndex];
-
-
-        // mass_point.time = deltaTime - mass_point.time;
-
-        // damping += -1 * mass_point.force.magnitude / 2f; // ??
-        // Vector3 current_velocity = mass_point.velocity + mass_point.time * ((mass_point.force + externalForce + damping * mass_point.velocity) / mass_point.mass);
-
-        // Vector3 equilibrium_position = mass_point.position;
-        // Vector3 current_position = equilibrium_position + mass_point.time * current_velocity;
-        // mass_point.position = current_position;
-        // Vector3 displacement = current_position - equilibrium_position;
-
-        // mass_point.force = mass_point.mass * (current_velocity - mass_point.velocity) / mass_point.time + damping * mass_point.velocity;
-
-        // Debug.Log(mass_point.position);
-        // massPoints[effectedVertexIndex] = mass_point;
-
-        // foreach (var spring in springs)
-        // {
-        //     Vector3 springForce = -1 * spring.stiffness * displacement;
-
-
-        //     // // // point A
-        //     MassPoint mass_point_A = massPoints[spring.pointA];
-        //     Vector3 acceleration_A = (mass_point_A.force + externalForce) / mass_point_A.mass;
-
-        //     // change force
-        //     Vector3 total_force_A = springForce + mass_point_A.mass * acceleration_A + spring.damping * mass_point_A.velocity + spring.stiffness * mass_point_A.position;
-        //     mass_point_A.force = total_force_A;
-
-        //     // change velocity
-        //     mass_point_A.velocity = -1 * (acceleration_A * mass_point_A.mass - total_force_A) / spring.damping;
-
-        //     massPoints[spring.pointA] = mass_point_A;
-
-
-        //     // // // point B
-        //     MassPoint mass_point_B = massPoints[spring.pointB];
-        //     Vector3 acceleration_B = (mass_point_B.force + externalForce) / mass_point_B.mass;
-
-        //     // change force
-        //     Vector3 total_force_B = springForce + mass_point_B.mass * acceleration_B + spring.damping * mass_point_B.velocity + spring.stiffness * mass_point_B.position;
-        //     mass_point_B.force = total_force_B;
-
-        //     // change velocity
-        //     mass_point_B.velocity = -1 * (acceleration_B * mass_point_B.mass - total_force_B) / spring.damping;
-
-        //     massPoints[spring.pointB] = mass_point_B;
-        // }
-
     }
 
-    void ApplyForces()
+    public Vector3[] UpdateMassPoints()
     {
-
+        Vector3[] massPointsPosition = new Vector3[massPoints.Count];
         for (int i = 0; i < massPoints.Count; i++)
         {
-            MassPoint point = massPoints[i];
-            point.force = externalForce * massPoints[i].mass;
-            massPoints[i] = point;
+            massPointsPosition[i] = massPoints[i].position;
         }
-
-        // Compute spring forces
-        foreach (var spring in springs)
-        {
-            MassPoint pointA = massPoints[spring.pointA];
-            MassPoint pointB = massPoints[spring.pointB];
-
-            Vector3 delta = pointB.position - pointA.position;
-            float currentLength = delta.magnitude;
-            Vector3 direction = delta.normalized;
-
-            Vector3 springForce = -spring.stiffness * (currentLength - spring.restLength) * direction;
-
-            Vector3 relativeVelocity = pointB.velocity - pointA.velocity;
-            Vector3 dampingForce = -spring.damping * relativeVelocity;
-
-            pointA.force += springForce + dampingForce;
-            pointB.force -= springForce + dampingForce;
-            massPoints[spring.pointA] = pointA;
-            massPoints[spring.pointB] = pointB;
-        }
-    }
-
-    void UpdateMassPoints(float deltaTime)
-    {
-        for (int i = 0; i < massPoints.Count; i++)
-        {
-            MassPoint point = massPoints[i];
-
-            Vector3 acceleration = point.force / point.mass;
-            point.velocity += acceleration * deltaTime;
-            point.position += point.velocity * deltaTime;
-
-            massPoints[i] = point; // Update mass point in the list
-        }
+        return massPointsPosition;
     }
 
     void UpdateMesh()
     {
-        // Create and update mesh based on mass points
-        Mesh mesh = new Mesh();
+        // Create a new mesh
+        Mesh newMesh = new Mesh();
 
+        // Update vertices based on mass points
+        Vector3[] updatedVertices = new Vector3[massPoints.Count];
         for (int i = 0; i < massPoints.Count; i++)
         {
-            vertices[i] = transform.InverseTransformPoint(massPoints[i].position);
+            updatedVertices[i] = transform.InverseTransformPoint(massPoints[i].position);
         }
 
-        mesh.vertices = vertices;
+        // Set vertices to the new mesh
+        newMesh.vertices = updatedVertices;
 
-        GetComponent<MeshFilter>().mesh = mesh;
+        // Copy other mesh data from the original mesh (if needed)
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        Mesh originalMesh = meshFilter.mesh;
 
+        newMesh.triangles = originalMesh.triangles;
+        newMesh.uv = originalMesh.uv;
+        newMesh.normals = originalMesh.normals;
+        newMesh.colors = originalMesh.colors;
+        newMesh.tangents = originalMesh.tangents;
+        newMesh.boneWeights = originalMesh.boneWeights;
+
+        // Recalculate normals and bounds
+        newMesh.RecalculateNormals();
+        newMesh.RecalculateBounds();
+
+        // Replace the original mesh with the new mesh
+        meshFilter.mesh = newMesh;
     }
 
 

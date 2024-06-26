@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class BVHManager : MonoBehaviour
 {
+    public bool isChanging = false;
     private BVHTree bvhTree = new BVHTree();
     private List<BVHObject> managedObjects;
     private List<BoxNode> boxes = new List<BoxNode>();
-    // int t1, t2 = 0;
+
+    private int c = 0;
     [SerializeField] public int count = 5;
 
     public void Initialize()
@@ -29,21 +31,33 @@ public class BVHManager : MonoBehaviour
         }
     }
 
+
     void Update()
     {
-        //         t1= Time.realtimeSinceStartup();
-        // if
-        //         // Rebuild the BVH every frame for simplicity (could be optimized)
-        //         boxes = new List<BoxNode>();
-        //         bvhTree = new BVHTree();
+        // Rebuild the BVH every frame for simplicity (could be optimized)
+        if (isChanging && c % 15 == 0)
+        {
+            boxes = new List<BoxNode>();
+            bvhTree = new BVHTree();
 
-        //         foreach (var obj in managedObjects)
-        //         {
-        //             obj.UpdateBoundingBoxes();
-        //             foreach (var BoundingBox in obj.BoundingBoxes)
-        //                 bvhTree.Insert(obj.gameObject, BoundingBox);
-        //         }
+            foreach (var obj in managedObjects)
+            {
+                obj.UpdateBoundingBoxes();
+                foreach (var BoundingBox in obj.BoundingBoxes)
+                    bvhTree.Insert(obj.gameObject, BoundingBox);
+            }
+
+            if (bvhTree != null && bvhTree.Root != null)
+            {
+                DrawNodeGizmos(bvhTree.Root, 0);
+
+                // Debug.Log($"Initialize boxes number: {boxes.Count}");
+            }
+        }
+        c++;
+
     }
+
 
     public List<GameObject> Query(AABB queryBox)
     {

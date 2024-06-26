@@ -67,7 +67,7 @@ public class Simulation3D : MonoBehaviour
 
     Spawner3D.SpawnData genData;
     private static BVHManager bvhManager;
-    private float PreTime, PreTime2 = 0;
+    private float t, PreTime, PreTime2 = 0;
 
     private int layerCount = 0;
 
@@ -198,15 +198,14 @@ public class Simulation3D : MonoBehaviour
             float timeStep = frameTime / iterationsPerFrame * timeScale;
 
             UpdateSettings(timeStep);
-            float t = Time.frameCount * Time.fixedDeltaTime;
-
-            if (t - PreTime >= 0.1f)
+            t += timeStep;
+            if (t - PreTime >= timeStep * 6.0f)
             {
                 PreTime = t;
                 SetPreviousPositions();
             }
 
-            if (t - PreTime2 >= 0.1f)
+            if (t - PreTime2 >= timeStep * 6.0f)
             {
                 PreTime2 = t;
                 SetNewLayer();

@@ -196,7 +196,22 @@ public class Simulation3D : MonoBehaviour
         if (!isPaused)
         {
             float timeStep = frameTime / iterationsPerFrame * timeScale;
+            if (bvhManager != null)
+            {
+                // Access the list of boxes
+                List<BoxNode> boxes = bvhManager.GetBoxes();
+                BoxNode[] boxesArray = boxes.ToArray();
+                // // Process the boxes
 
+                obstacleCentres = new Vector3[boxesArray.Length];
+                obstacleSizes = new Vector3[boxesArray.Length];
+                for (int i = 0; i < boxesArray.Length; i++)
+                {
+                    obstacleCentres[i] = boxesArray[i].Center;
+                    obstacleSizes[i] = boxesArray[i].Size;
+                }
+
+            }
             UpdateSettings(timeStep);
             t += timeStep;
             if (t - PreTime >= timeStep * 6.0f)

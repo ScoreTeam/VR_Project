@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ParticleDisplay3D : MonoBehaviour
@@ -30,6 +31,7 @@ public class ParticleDisplay3D : MonoBehaviour
         mat.SetBuffer("Velocities", sim.velocityBuffer);
         mat.SetBuffer("InitialVelocities", sim.initVelocityBuffer);
 
+        mat.SetFloat("velocityMax", math.length(sim.spawner.initialVel));
         // mesh = SebStuff.SphereGenerator.GenerateSphereMesh(meshResolution);
         mesh = SebStuff.SphereGenerator.GeneratePointMesh();
         // debug_MeshTriCount = mesh.triangles.Length / 3;

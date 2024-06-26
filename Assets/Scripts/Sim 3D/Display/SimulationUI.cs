@@ -6,6 +6,7 @@ public class SimulationUI : MonoBehaviour
     public Simulation3D simulation;
     public ParticleDisplay3D ParticleDisplay;
     public Spawner3D spawner;
+    public MassSpringSystem MSS;
 
     public Slider timeScaleSlider;
     public InputField velocityDisplayDif;
@@ -24,6 +25,7 @@ public class SimulationUI : MonoBehaviour
     public InputField initialVelInput;
     public Slider jitterStrengthSlider;
     public InputField debug_numParticles;
+    public Toggle showODToggle;
     void Start()
     {
         timeScaleSlider.value = simulation.timeScale;
@@ -43,6 +45,7 @@ public class SimulationUI : MonoBehaviour
         initialVelInput.text = spawner.initialVel.x.ToString();
         jitterStrengthSlider.value = spawner.jitterStrength;
         debug_numParticles.text = spawner.debug_numParticles.ToString();
+        showODToggle.isOn = false; //MSS.showOD;
 
         timeScaleSlider.onValueChanged.AddListener(OnTimeScaleChanged);
         velocityDisplayDif.onEndEdit.AddListener(OnVelocityDisplayDifChanged);
@@ -60,6 +63,7 @@ public class SimulationUI : MonoBehaviour
         sizeSlider.onValueChanged.AddListener(OnSizeChanged);
         initialVelInput.onEndEdit.AddListener(OnInitialVelChanged);
         jitterStrengthSlider.onValueChanged.AddListener(OnJitterStrengthChanged);
+        showODToggle.onValueChanged.AddListener(OnShowODChanged);
     }
 
     void OnTimeScaleChanged(float value)
@@ -159,6 +163,7 @@ public class SimulationUI : MonoBehaviour
         if (float.TryParse(value, out float result))
         {
             spawner.initialVel.x = -result;
+            ParticleDisplay.velocityDisplayMax = result;
         }
     }
 
@@ -166,8 +171,12 @@ public class SimulationUI : MonoBehaviour
     {
         spawner.jitterStrength = value;
     }
-
-    void Update(){
+    void OnShowODChanged(bool value)
+    {
+        // MSS.showOD = value;
+    }
+    void Update()
+    {
         debug_numParticles.text = spawner.debug_numParticles.ToString();
     }
 

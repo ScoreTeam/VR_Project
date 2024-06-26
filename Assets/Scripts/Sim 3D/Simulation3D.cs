@@ -67,7 +67,7 @@ public class Simulation3D : MonoBehaviour
 
     Spawner3D.SpawnData genData;
     private static BVHManager bvhManager;
-    private float PreTime, PreTime2 = 0;
+    private float t, PreTime, PreTime2 = 0;
 
     private int layerCount = 0;
 
@@ -93,7 +93,7 @@ public class Simulation3D : MonoBehaviour
     {
         Debug.Log("Controls: Space = Play/Pause, R = Reset,Right Arrow = Next frame, Esc = Quit");
         Debug.Log("Use transform tool in scene to scale/rotate simulation bounding box.");
-        // Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60;
         float deltaTime = 1 / 60f;
         Time.fixedDeltaTime = deltaTime;
 
@@ -198,15 +198,14 @@ public class Simulation3D : MonoBehaviour
             float timeStep = frameTime / iterationsPerFrame * timeScale;
 
             UpdateSettings(timeStep);
-            float t = Time.realtimeSinceStartup;
-
-            if (t - PreTime >= 0.1f)
+            t += timeStep;
+            if (t - PreTime >= timeStep * 6.0f)
             {
                 PreTime = t;
                 SetPreviousPositions();
             }
 
-            if (t - PreTime2 >= 1.0f)
+            if (t - PreTime2 >= timeStep * 6.0f)
             {
                 PreTime2 = t;
                 SetNewLayer();

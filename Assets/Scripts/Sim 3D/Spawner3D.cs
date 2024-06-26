@@ -55,19 +55,21 @@ public class Spawner3D : MonoBehaviour
 
     public SpawnData GeneratePoints()
     {
-        int numPoints2 = numParticlesPerAxis * numParticlesPerAxis * numParticlesPerAxis;
+        // int numPoints2 = numParticlesPerAxis * numParticlesPerAxis * numParticlesPerAxis;
+        int numPoints2 = numParticlesPerAxis * numParticlesPerAxis ;
         float3[] points = new float3[numPoints2];
         float3[] velocities = new float3[numPoints2];
 
         OnValidate();
         int i = 0;
-        for (int x = 0; x < numParticlesPerAxis; x++)
-        {
+        // for (int x = 0; x < numParticlesPerAxis; x++)
+        // {
             for (int y = 0; y < numParticlesPerAxis; y++)
             {
                 for (int z = 0; z < numParticlesPerAxis; z++)
                 {
-                    float tx = x / (numParticlesPerAxis - 1f);
+                    // float tx = x / (numParticlesPerAxis - 1f);
+                    float tx = 0 / (numParticlesPerAxis - 1f);
                     float ty = y / (numParticlesPerAxis - 1f);
                     float tz = z / (numParticlesPerAxis - 1f);
 
@@ -80,7 +82,7 @@ public class Spawner3D : MonoBehaviour
                     i++;
                 }
             }
-        }
+        // }
 
         return new SpawnData() { points = points, velocities = velocities };
     }
@@ -93,11 +95,14 @@ public class Spawner3D : MonoBehaviour
 
     void OnValidate()
     {
-        if (Math.Pow(numParticlesPerAxis, 3) >= numPoints)
+        // if (Math.Pow(numParticlesPerAxis, 3) >= numPoints)
+        if (Math.Pow(numParticlesPerAxis, 2) >= numPoints)
         {
-            numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 3.0);
+            // numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 3.0);
+            numParticlesPerAxis = (int)Math.Pow(numPoints, 1.0 / 2.0);
         }
-        debug_numParticles = numParticlesPerAxis * numParticlesPerAxis * numParticlesPerAxis;
+        // debug_numParticles = numParticlesPerAxis * numParticlesPerAxis * numParticlesPerAxis;
+        debug_numParticles = numParticlesPerAxis * numParticlesPerAxis;
     }
 
     void OnDrawGizmos()

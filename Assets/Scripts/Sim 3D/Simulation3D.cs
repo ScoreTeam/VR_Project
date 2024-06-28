@@ -27,7 +27,7 @@ public class Simulation3D : MonoBehaviour
     public Spawner3D spawner;
     public ParticleDisplay3D display;
     public Transform floorDisplay;
-
+    public Mesh affectedMesh;
     // Buffers
     public ComputeBuffer positionBuffer { get; private set; }
     public ComputeBuffer initPositionBuffer { get; private set; }
@@ -67,6 +67,8 @@ public class Simulation3D : MonoBehaviour
 
     Spawner3D.SpawnData genData;
     private static BVHManager bvhManager;
+
+    private List<BVHModel> bvhModels;
     private float t, PreTime, PreTime2 = 0;
 
     private int layerCount = 0;
@@ -161,6 +163,8 @@ public class Simulation3D : MonoBehaviour
             }
 
         }
+
+        bvhModels = new List<BVHModel>(FindObjectsOfType<BVHModel>());
     }
 
     void FixedUpdate()
@@ -360,6 +364,54 @@ public class Simulation3D : MonoBehaviour
 
     void HandleInput()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            foreach (var obj in bvhModels)
+            {
+                if (obj.gameObject.name == "model 1")
+                {
+                    obj.isOn = true;
+                }
+                else
+                {
+                    obj.isOn = false;
+                }
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            foreach (var obj in bvhModels)
+            {
+                if (obj.gameObject.name == "model 2")
+                {
+                    obj.isOn = true;
+                }
+                else
+                {
+                    obj.isOn = false;
+                }
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            foreach (var obj in bvhModels)
+            {
+                if (obj.gameObject.name == "model 3")
+                {
+                    obj.isOn = true;
+                }
+                else
+                {
+                    obj.isOn = false;
+                }
+            }
+        }if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            foreach (var obj in bvhModels)
+            {
+                    obj.isOn = false;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             isPaused = !isPaused;

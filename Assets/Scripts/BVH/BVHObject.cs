@@ -3,21 +3,10 @@ using UnityEngine;
 
 public class BVHObject : MonoBehaviour
 {
-        public List<AABB> BoundingBoxes= new List<AABB>();
+    public List<AABB> BoundingBoxes = new List<AABB>();
     public List<AABB> AllBoxes;
+    public bool isON = false;
     [SerializeField] public int subdivisions = 10; // You can adjust this for more/less accuracy
-
-    void Update()
-    {
-        // UpdateBoundingBoxes();
-    }
-
-    public void Initialize()
-    {
-        UpdateBoundingBoxes();
-    }
-
-
     public void UpdateBoundingBoxes()
     {
         BoundingBoxes.Clear();
@@ -57,7 +46,7 @@ public class BVHObject : MonoBehaviour
                             AABB subAABB = new AABB(subMin, subMax);
                             // MassSpringSystem massSpringSystem =  new MassSpringSystem();
                             // Vector3[] massPointsPosition = massSpringSystem.UpdateMassPoints();
-                            
+
                             if (SubAABBIntersectsVertices(subAABB, vertices, transform))
                             {
                                 BoundingBoxes.Add(subAABB);

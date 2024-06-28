@@ -71,9 +71,9 @@ public class MassSpringSystem : MonoBehaviour
 
     void Update()
     {
-         HandleInput();
+        HandleInput();
 
-        if (isDeforming && /*externalForce != new Vector3(0, 0, 0) &&*/ count % 10 == 0)
+        if (isDeforming && /*externalForce != new Vector3(0, 0, 0) &&*/ count % 15 == 0 && count > 150)
         {
             apply_from_doc(Time.deltaTime);
             UpdateMesh();
@@ -137,62 +137,64 @@ public class MassSpringSystem : MonoBehaviour
     }
 
     void apply_from_doc(float deltaTime)
+{
+    // Decrease the frequency of updates
+    float effectiveDeltaTime = deltaTime * 0.1f; // Adjust this factor to control deformation speed
+
+    // Reduce the external force magnitude
+    Vector3 effectiveExternalForce = externalForce * 0.1f; // Adjust this factor to control external force
+
+    // Apply Euler method
+    MassPoint mass_point = massPoints[effectedVertexIndex];
+    mass_point.position = mass_point.position + (effectiveDeltaTime - mass_point.time) * mass_point.velocity;
+    mass_point.velocity = mass_point.velocity + (effectiveDeltaTime - mass_point.time) * (effectiveExternalForce + damping * mass_point.velocity) / mass_point.mass;
+    massPoints[effectedVertexIndex] = mass_point;
+
+    foreach (var spring in springs)
     {
+        MassPoint pointA = massPoints[spring.pointA];
+        MassPoint pointB = massPoints[spring.pointB];
 
-        // apply eular
-        MassPoint mass_point = massPoints[effectedVertexIndex];
+        Vector3 distance = pointA.position - pointB.position;
 
-        mass_point.position = mass_point.position + (deltaTime - mass_point.time) * mass_point.velocity;
-        mass_point.velocity = mass_point.velocity + (deltaTime - mass_point.time) * (externalForce + damping * mass_point.velocity) / mass_point.mass;
-        massPoints[effectedVertexIndex] = mass_point;
-
-        foreach (var spring in springs)
+        if (distance.magnitude - spring.restLength != 0 && distance.magnitude < spring.restLength * 3 / 2)
         {
+            // Initial force with reduced stiffness
+            Vector3 springForce = -0.1f * spring.stiffness * (distance.magnitude - spring.restLength) * (pointA.position - pointB.position) / distance.magnitude;
+            pointA.force = springForce;
+            pointB.force = -springForce;
 
-            MassPoint pointA = massPoints[spring.pointA];
-            MassPoint pointB = massPoints[spring.pointB];
+            // Apply Euler method
+            pointA.position = pointA.position + (effectiveDeltaTime - pointA.time) * pointA.velocity;
+            pointA.velocity = pointA.velocity + (effectiveDeltaTime - pointA.time) * (pointA.force + spring.damping * mass_point.velocity) / mass_point.mass;
 
-            Vector3 distance = pointA.position - pointB.position;
+            pointB.position = pointB.position + (effectiveDeltaTime - pointB.time) * pointB.velocity;
+            pointB.velocity = pointB.velocity + (effectiveDeltaTime - pointB.time) * (pointB.force + spring.damping * mass_point.velocity) / mass_point.mass;
 
+            // External force
+            Vector3 externalForceA = pointA.force + spring.damping * pointA.velocity;
+            Vector3 externalForceB = pointB.force + spring.damping * pointB.velocity;
 
-            if (distance.magnitude - spring.restLength != 0 && distance.magnitude < spring.restLength * 3 / 2)
+            // Total force
+            Vector3 totalForceA = pointA.force + externalForceA;
+            Vector3 totalForceB = pointB.force + externalForceB;
+
+            // Change
+            float max_ability = spring.restLength * 2f;
+            float min_ability = spring.restLength / 2f;
+
+            if (distance.magnitude < max_ability && distance.magnitude > min_ability)
             {
-                // initial force
-                pointA.force = -1 * spring.stiffness * (distance.magnitude - spring.restLength) * (pointA.position - pointB.position) / distance.magnitude;
-                pointB.force = -1 * spring.stiffness * (distance.magnitude - spring.restLength) * (pointB.position - pointA.position) / distance.magnitude;
+                pointA.force = totalForceA;
+                massPoints[spring.pointA] = pointA;
 
-
-                // eular
-                pointA.position = pointA.position + (deltaTime - pointA.time) * pointA.velocity;
-                pointA.velocity = pointA.velocity + (deltaTime - pointA.time) * (pointA.force + spring.damping * mass_point.velocity) / mass_point.mass;
-
-                pointB.position = pointB.position + (deltaTime - pointB.time) * pointB.velocity;
-                pointB.velocity = pointB.velocity + (deltaTime - pointB.time) * (pointB.force + spring.damping * mass_point.velocity) / mass_point.mass;
-
-                // // external force
-                Vector3 externalForceA = pointA.force + spring.damping * pointA.velocity;
-                Vector3 externalForceB = pointB.force + spring.damping * pointB.velocity;
-
-                // // total force
-                Vector3 totalForceA = pointA.force + externalForceA;
-                Vector3 totalForceB = pointB.force + externalForceB;
-
-                // // change
-                float max_ability = spring.restLength * 2f;
-                float min_ability = spring.restLength / 2f;
-
-                if (distance.magnitude < max_ability && distance.magnitude > min_ability)
-                {
-                    pointA.force = totalForceA;
-                    massPoints[spring.pointA] = pointA;
-
-                    pointB.force = totalForceB;
-                    massPoints[spring.pointB] = pointB;
-                }
+                pointB.force = totalForceB;
+                massPoints[spring.pointB] = pointB;
             }
-
         }
     }
+}
+
 
     public Vector3[] UpdateMassPoints()
     {

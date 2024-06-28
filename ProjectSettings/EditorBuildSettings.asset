@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/3D Sim 1 - Copy (2).unity
-    guid: 6795fa80a7b227840bdd8066e6859f44
+    path: Assets/Scenes/Sim.unity
+    guid: b5a7c7a4994e67947852d3572158efa0
   m_configObjects: {}

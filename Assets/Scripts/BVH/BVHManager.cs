@@ -14,45 +14,37 @@ public class BVHManager : MonoBehaviour
     public void Initialize()
     {
         managedObjects = new List<BVHObject>(FindObjectsOfType<BVHObject>());
-
         // Insert all managed objects into the BVH
+        calBoxes();
+    }
+
+    void calBoxes()
+    {
         foreach (var obj in managedObjects)
         {
-            obj.UpdateBoundingBoxes();
-            foreach (var BoundingBox in obj.BoundingBoxes)
-                bvhTree.Insert(obj.gameObject, BoundingBox);
+            if (obj.isON == true)
+            {
+                obj.UpdateBoundingBoxes();
+                foreach (var BoundingBox in obj.BoundingBoxes)
+                {
+                    bvhTree.Insert(obj.gameObject, BoundingBox);
+                }
+            }
         }
 
         if (bvhTree != null && bvhTree.Root != null)
         {
             DrawNodeGizmos(bvhTree.Root, 0);
-
-            // Debug.Log($"Initialize boxes number: {boxes.Count}");
         }
     }
-
-
     void Update()
     {
         // Rebuild the BVH every frame for simplicity (could be optimized)
-        if (isChanging && c % 15 == 0)
+        if (isChanging && c % 30 == 0 && c > 150)
         {
-            boxes = new List<BoxNode>();
             bvhTree = new BVHTree();
-
-            foreach (var obj in managedObjects)
-            {
-                obj.UpdateBoundingBoxes();
-                foreach (var BoundingBox in obj.BoundingBoxes)
-                    bvhTree.Insert(obj.gameObject, BoundingBox);
-            }
-
-            if (bvhTree != null && bvhTree.Root != null)
-            {
-                DrawNodeGizmos(bvhTree.Root, 0);
-
-                // Debug.Log($"Initialize boxes number: {boxes.Count}");
-            }
+            boxes = new List<BoxNode>();
+            calBoxes();
         }
         c++;
 
